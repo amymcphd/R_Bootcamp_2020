@@ -1,5 +1,4 @@
 name: "R-bootcamp-2020"
-output_dir: "."
 navbar:
   title: "R Bootcamp 2020"
   left:
