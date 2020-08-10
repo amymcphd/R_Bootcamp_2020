@@ -1,11 +1,12 @@
 
-git <- function (..., echo_cmd = TRUE, echo = TRUE, error_on_status = TRUE)
-{
-    processx::run( "git"
-                 , c(...)
-                 , echo_cmd = echo_cmd
-                 , echo = echo
-                 , error_on_status = error_on_status)
+git <- function (..., echo_cmd = TRUE, echo = TRUE, error_on_status = TRUE) {
+    invisible(
+        processx::run( "git"
+                     , c(...)
+                     , echo_cmd = echo_cmd
+                     , echo = echo
+                     , error_on_status = error_on_status)
+    )
 }
 
 git_has_remote_branch <- function (remote, branch) {
@@ -19,13 +20,41 @@ git_current_branch <- function () {
     sub("\n$", "", branch)
 }
 github_worktree_add <- function (dir, remote, branch) {
-    rule("Adding worktree", line = 1)
+    cli::cat_rule("Adding worktree", line = 1)
     git("worktree", "add", "--track", "-B",
         branch, dir, paste0(remote, "/", branch))
 }
 github_worktree_remove <- function (dir) {
     cli::cat_rule("Removing worktree", line = 1)
     git("worktree", "remove", dir)
+}
+
+render_site <-
+function( input = "."
+        , output_format = "all"
+        , envir = parent.frame()
+        , quiet = FALSE
+        , encoding = "UTF-8"
+        ) {
+    original_input <- input
+    input <- input_as_dir(input)
+    input_file <- NULL
+    if (!dir_exists(original_input)) {
+        input_file <- original_input
+        if (output_format == "all")
+            output_format <- NULL
+    }
+    generator <- site_generator(input, output_format)
+    if (is.null(generator))
+        stop("No site generator found.")
+    generator$render(input_file = input_file, output_format = output_format,
+        envir = envir, quiet = quiet)
+    if (!dir_exists(original_input))
+        output <- file_with_ext(basename(original_input), "html")
+    else output <- "index.html"
+    output <- file.path(input, generator$output_dir, output)
+    output <- normalized_relative_to(input, output)
+    invisible(output)
 }
 
 deploy <-
@@ -52,7 +81,13 @@ function( pkg = "."
     github_worktree_add(dest_dir, remote, branch)
     on.exit(github_worktree_remove(dest_dir), add = TRUE)
 
-    pkg <- as_pkgdown(pkg, override = list(destination = dest_dir))
+    input.dir <- fs::path_abs(pkg)
+    write_lines(paste("output_dir:",shQuote(gsub("/", "\\\\\\\\", fs::path_norm(dest_dir)))), "_site.yml", append=TRUE)
+    rmarkdown::render_site('.')
+
+    git("checkout", "_site.yml")
+
+    # pkg <- as_pkgdown(pkg, override = list(destination = dest_dir))
     build_site(pkg, devel = FALSE, preview = FALSE, install = FALSE, ...)
     if (github_pages) {
         build_github_pages(pkg)
