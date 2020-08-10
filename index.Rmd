@@ -8,3 +8,8 @@ Welcome to R Bootcamp 2020.
 
 This webpage will be your guide to this course. Please Start by reading the 
 [Syllabus](about.html)
+
+
+## Slides
+
+
