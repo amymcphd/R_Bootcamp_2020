@@ -52,16 +52,16 @@ in which they will be covered, although there will be some skipping around as
 some topics are best learned with the context of others.
 All are time permitting and we may not get to some of the later ones.
 
-1. Introductions
+1. [Introductions](Introductions.html)
 2. R & RStudio Walkthrough
-3. Understanding R Principles
-4. R Syntax
+3. [Understanding R Principles](Principles.html)
+4. [R Syntax](Syntax.html)
     a. Variables
     b. Operators
     c. Control Stuctures
     d. Functions
     e. Formulas, Specials, and R Uniqueness
-5. Data Structure in R.
+5. [Data Structure in R](Syntax.html)
     a. Vectors & matrices
     b. Lists
     c. Data Frames

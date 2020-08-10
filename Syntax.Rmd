@@ -1,0 +1,167 @@
+---
+title: "R Syntax & Data Structures"
+author: "Andrew Redd, PhD."
+date: "R Bootcamp 2020"
+output:
+    ioslides_presentation:
+        logo: "images/U_Health_stacked_png_red.png"
+        theme: "paper"
+        css: "style.css"
+        keep_md: FALSE
+        md_extensions:
+            - "+task_lists"
+            - "+multiline_tables"
+        includes:
+            in_header: timer.htm
+        standalone: TRUE
+        widescreen: TRUE
+---
+
+# Basic R Syntax
+
+This will be short, I promise.
+
+## The absolute most important part of syntax ... {.build}
+:::{.flexbox .vcenter}
+**Comments** 
+:::
+
+Comments are started by the `#` character
+
+Some comments have special meaning.
+
+>    - `#'` documentation comment
+>    - `#!` sometimes configuration comments
+>    - `#<` hey i'm talking about this comment.
+
+-----
+
+![](images/wtfpm.jpg){.fullpage}
+
+## Assignments
+
+* `a <- 1` assigns the value `1` to the variable `a`.
+* `a = 1` does the same, *generally*.
+    + The generally is why this is also generally discouraged.
+
+## Variables {.build}
+
+* Variables "can" include:
+   - letters (case-sensitive)
+   - numbers, as long as it does not start with a number
+   - period, if it starts with a period it is 'hidden'
+   - underscore, but may not start with underscore
+* But if you want to be fancy use back ticks `\`` and you can do whatever you want.
+
+```{r "Long name assignments"}
+`A variable name that is actually informative` <- 
+    "A string that is not"
+`A variable name that is actually informative`
+```
+
+## Functions {.build}
+
+* create a function with 
+```{r "Hello world function creation"}
+hello_world <- function(who = 'world', how = 'hello'){
+    print(paste(how, who))
+}
+```
+* Now call the function with
+```{r "Calling the hello_world function"}
+hello_world()
+```
+
+## Vectors {.build}
+
+* In R everything is a vector
+* Sequential vectors can be created with `:`
+```{r "sequence operator"}
+a <- 1:5
+```
+* Create longer vectors by combining smaller vectors
+```{r "Combine operator"}
+b <- c(a, 6, 7, 8)
+```
+
+### Types 
+:::{.columns-3}
+* integer
+* numeric
+* logical
+* list (i.e. anything)
+* *language*
+:::
+
+## Vector Operations {.build}
+
+```{r Comments}
+# Comments use the '#' character
+```
+```{r "Obvious Operators"}
+# Most operations are obvious
+length(b)
+sort(b)
+class(b)
+```
+
+## Indexing (2-types)  {.build}
+
+:::::: {.columns-2}
+::: {.column}
+* `[` - subsetting
+  - preserves class
+  - multiple indices
+:::
+::: {.column}
+* `[[` - extraction
+  - no guarantee of class
+  - single index
+:::
+::::::
+
+```{r Lists}
+# A list holds anything
+a <- list(first=1L, second=2, FALSE)
+```
+
+:::::: {.columns-2}
+::: {.column}
+```{r "single bracket indexing"}
+# by position
+class(a[1])
+# by name
+class(a['second'])
+```
+:::
+::: {.column}
+```{r "Double bracket indexing"}
+# by position
+class(a[[1]])
+# by name
+class(a[['second']])
+```
+:::
+::::::
+
+## `$` Indexing
+
+lists may also be indexed by the `$` sign.
+
+*But be careful not all vectors can be.*
+
+```{r "Dollar indexing"}
+a$first
+a$second
+```
+
+This comes in useful for data.
+
+## Data Types
+
+### Data for our purpose is:
+> * A (named) list of variables,
+>   - where all variables have the same length;
+> * Rectangular with  and rows as observations.
+>   - columns as variables `ncol(iris)=``r ncol(iris)`
+>   - and rows as observations `nrow(iris)=``r nrow(iris)`

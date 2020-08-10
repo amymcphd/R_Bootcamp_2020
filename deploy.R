@@ -47,8 +47,10 @@ function( input = "."
     generator <- site_generator(input, output_format)
     if (is.null(generator))
         stop("No site generator found.")
-    generator$render(input_file = input_file, output_format = output_format,
-        envir = envir, quiet = quiet)
+    generator$render( input_file = input_file
+                    , output_format = output_format
+                    , envir = envir
+                    , quiet = quiet)
     if (!dir_exists(original_input))
         output <- file_with_ext(basename(original_input), "html")
     else output <- "index.html"
@@ -56,9 +58,26 @@ function( input = "."
     output <- normalized_relative_to(input, output)
     invisible(output)
 }
-
+github_push <-
+function( dir = '.'
+        , commit_message = "Committing page"
+        , remote='origin'
+        , branch='gh-pages'
+        ) {
+    force(commit_message)
+    cli::cat_rule("Commiting updated site", line = 1)
+    with_dir(dir, {
+        git("add", "-A", ".")
+        git("commit", "--allow-empty", "-m",
+            commit_message)
+        cli::cat_rule("Deploying to GitHub Pages", line = 1)
+        git("remote", "-v")
+        git("push", "--force", remote, paste0("HEAD:",
+            branch))
+    })
+}
 deploy <-
-function( pkg = "."
+function( dir = "."
         , commit_message = "Deployed"
         , branch = "gh-pages"
         , remote = "origin"
@@ -81,17 +100,16 @@ function( pkg = "."
     github_worktree_add(dest_dir, remote, branch)
     on.exit(github_worktree_remove(dest_dir), add = TRUE)
 
-    input.dir <- fs::path_abs(pkg)
-    write_lines(paste("output_dir:",shQuote(gsub("/", "\\\\\\\\", fs::path_norm(dest_dir)))), "_site.yml", append=TRUE)
-    rmarkdown::render_site('.')
+    # write_lines(paste("output_dir:",shQuote(gsub("/", "\\\\\\\\", fs::path_norm(dest_dir)))), "_site.yml", append=TRUE)
+    rmarkdown::render_site(dir)
 
-    git("checkout", "_site.yml")
+    # git("checkout", "_site.yml")
 
     # pkg <- as_pkgdown(pkg, override = list(destination = dest_dir))
-    build_site(pkg, devel = FALSE, preview = FALSE, install = FALSE, ...)
-    if (github_pages) {
-        build_github_pages(pkg)
-    }
+    # build_site(pkg, devel = FALSE, preview = FALSE, install = FALSE, ...)
+    # if (github_pages) {
+    #     build_github_pages(pkg)
+    # }
     github_push(dest_dir, commit_message, remote, branch)
     invisible()
 }
