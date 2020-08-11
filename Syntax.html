@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>R Syntax &amp; Data Structures</title>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="generator" content="pandoc" />
+
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+
+  <base target="_blank">
+
+  <script type="text/javascript">
+    var SLIDE_CONFIG = {
+      // Slide settings
+      settings: {
+                title: 'R Syntax &amp; Data Structures',
+                        useBuilds: true,
+        usePrettify: true,
+        enableSlideAreas: true,
+        enableTouch: true,
+                        favIcon: 'Syntax_files/logo.png',
+              },
+
+      // Author information
+      presenters: [
+            {
+        name:  'Andrew Redd, PhD.' ,
+        company: '',
+        gplus: '',
+        twitter: '',
+        www: '',
+        github: ''
+      },
+            ]
+    };
+  </script>
+
+  <script type='text/javascript' id='timer-js'>
+  var counts = {};
+  var timers = {};
+  var initial = {};
+  function startTimer() {
+  	//var count = initial;
+  	var trigger = event.target;
+  	var div = trigger.parentNode;
+  	console.log("startTimer triggered by click on " + div.nodeName + "#" + div.id + ">" + trigger.nodeName);
+  	var eid = div.id;
+  	var warning = (div.hasAttribute("warnafter")) ? (+div.getAttribute("warnafter")) : 0;
+  	console.log("eid=" + eid + ", warning=" + warning);
+      if (!(eid in initial)){
+          var p = trigger;
+  
+          var init = trigger.innerHTML;
+          console.log("init=" + init);
+  
+          var a = init.split(':');
+          initial[eid] = (+a[0])*60 + (+a[1]);
+          console.log("initial[eid]=", initial[eid]);
+      }
+      counts[eid] = initial[eid];
+      if (eid in timers && timers[eid] != 0) {
+          clearInterval(timers[eid]); timers[eid] = 0;
+          var minutes = Math.floor((initial[eid] % (60 * 60)) / (60));
+          var seconds = Math.floor((initial[eid] % (60)));
+          document.getElementById(eid).innerHTML = hms(initial[eid]);
+      } else {
+          timers[eid] = setInterval(function() {
+              // Time calculations for days, hours, minutes and seconds
+              var count = counts[eid] - 1;
+              if (count > 0) {
+                  document.getElementById(eid).innerHTML = hms(count, count <= warning);
+              } else {
+                  document.getElementById(eid).innerHTML = "<p class='timesup'>0:00</p>";
+                  clearInterval(timers[eid]);
+                  timers[eid] = 0;
+              }
+              counts[eid] = count;
+          }, 1000);
+      }
+  };
+  function hms(count, warn) {
+      var leading = ''
+      var minutes = Math.floor((count % (60 * 60)) / (60));
+      var seconds = Math.floor((count % (60)));
+      if (seconds <= 9){
+          leading = "0";
+      }
+      var start;
+      if (warn) {
+          start = "<p class='warning'>";
+      } else {
+          start = "<p>";
+      }
+      return start + minutes + ":" + leading +  seconds + "</p>";
+  };
+  </script>
+  <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="site_libs/bootstrap-3.3.5/css/paper.min.css" rel="stylesheet" />
+  <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+  <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+  <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+  <link href="site_libs/ioslides-13.5.1/fonts/fonts.css" rel="stylesheet" />
+  <link href="site_libs/ioslides-13.5.1/theme/css/default.css" rel="stylesheet" />
+  <link href="site_libs/ioslides-13.5.1/theme/css/phone.css" rel="stylesheet" />
+  <script src="site_libs/ioslides-13.5.1/js/modernizr.custom.45394.js"></script>
+  <script src="site_libs/ioslides-13.5.1/js/prettify/prettify.js"></script>
+  <script src="site_libs/ioslides-13.5.1/js/prettify/lang-r.js"></script>
+  <script src="site_libs/ioslides-13.5.1/js/prettify/lang-yaml.js"></script>
+  <script src="site_libs/ioslides-13.5.1/js/hammer.js"></script>
+  <script src="site_libs/ioslides-13.5.1/js/slide-controller.js"></script>
+  <script src="site_libs/ioslides-13.5.1/js/slide-deck.js"></script>
+
+  <style type="text/css">
+
+    b, strong {
+      font-weight: bold;
+    }
+
+    em {
+      font-style: italic;
+    }
+
+    summary {
+      display: list-item;
+    }
+
+    slides > slide {
+      -webkit-transition: all 0.4s ease-in-out;
+      -moz-transition: all 0.4s ease-in-out;
+      -o-transition: all 0.4s ease-in-out;
+      transition: all 0.4s ease-in-out;
+    }
+
+    .auto-fadein {
+      -webkit-transition: opacity 0.6s ease-in;
+      -webkit-transition-delay: 0.4s;
+      -moz-transition: opacity 0.6s ease-in 0.4s;
+      -o-transition: opacity 0.6s ease-in 0.4s;
+      transition: opacity 0.6s ease-in 0.4s;
+      opacity: 0;
+    }
+/* https://github.com/ropensci/plotly/pull/524#issuecomment-468142578 */
+slide:not(.current) .plotly.html-widget{
+  display: block;
+}
+
+    slides > slide:not(.nobackground):before {
+      font-size: 12pt;
+      content: "";
+      position: absolute;
+      bottom: 20px;
+      left: 60px;
+      background: url(Syntax_files/logo.png) no-repeat 0 50%;
+      -webkit-background-size: 30px 30px;
+      -moz-background-size: 30px 30px;
+      -o-background-size: 30px 30px;
+      background-size: 30px 30px;
+      padding-left: 40px;
+      height: 30px;
+      line-height: 1.9;
+    }
+  </style>
+
+  <link rel="stylesheet" href="style.css" type="text/css" />
+
+</head>
+
+<body style="opacity: 0">
+
+<slides class="layout-widescreen">
+
+  <slide class="title-slide segue nobackground">
+        <aside class="gdbar"><img src="Syntax_files/logo.png"></aside>
+        <!-- The content of this hgroup is replaced programmatically through the slide_config.json. -->
+    <hgroup class="auto-fadein">
+      <h1 data-config-title><!-- populated from slide_config.json --></h1>
+      
+      <p data-config-presenter><!-- populated from slide_config.json --></p>
+            <p style="margin-top: 6px; margin-left: -2px;">R Bootcamp 2020</p>
+          </hgroup>
+  </slide>
+
+<slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Basic R Syntax</h2></hgroup><article  id="basic-r-syntax">
+
+<p>This will be short, I promise.</p>
+
+</article></slide><slide class=""><hgroup><h2>The absolute most important part of syntax …</h2></hgroup><article  class="build" id="the-absolute-most-important-part-of-syntax">
+
+<div class="flexbox vcenter">
+<p><strong>Comments</strong></p></div>
+
+<p>Comments are started by the <code>#</code> character</p>
+
+<p>Some comments have special meaning.</p>
+
+<ul class = 'build'>
+<li><code>#&#39;</code> documentation comment</li>
+<li><code>#!</code> sometimes configuration comments</li>
+<li><code>#&lt;</code> hey i’m talking about this comment.</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2></h2></hgroup><article >
+
+<img class="fullpage" src='images/wtfpm.jpg' title=''/>
+
+</article></slide><slide class=""><hgroup><h2>Assignments</h2></hgroup><article  id="assignments">
+
+<ul>
+<li><code>a &lt;- 1</code> assigns the value <code>1</code> to the variable <code>a</code>.</li>
+<li><code>a = 1</code> does the same, <em>generally</em>.
+
+<ul>
+<li>The generally is why this is also generally discouraged.</li>
+</ul></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Variables</h2></hgroup><article  class="build" id="variables">
+
+<ul>
+<li>Variables &ldquo;can&rdquo; include:
+
+<ul>
+<li>letters (case-sensitive)</li>
+<li>numbers, as long as it does not start with a number</li>
+<li>period, if it starts with a period it is &lsquo;hidden&rsquo;</li>
+<li>underscore, but may not start with underscore</li>
+</ul></li>
+<li>But if you want to be fancy use back ticks ``` and you can do whatever you want.</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>`A variable name that is actually informative` &lt;- 
+    &quot;A string that is not&quot;
+`A variable name that is actually informative`</pre>
+
+<pre >## [1] &quot;A string that is not&quot;</pre>
+
+</article></slide><slide class=""><hgroup><h2>Functions</h2></hgroup><article  class="build" id="functions">
+
+<ul>
+<li>create a function with</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>hello_world &lt;- function(who = &#39;world&#39;, how = &#39;hello&#39;){
+    print(paste(how, who))
+}</pre>
+
+<ul>
+<li>Now call the function with</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>hello_world()</pre>
+
+<pre >## [1] &quot;hello world&quot;</pre>
+
+</article></slide><slide class=""><hgroup><h2>Vectors</h2></hgroup><article  class="build" id="vectors">
+
+<ul>
+<li>In R everything is a vector</li>
+<li>Sequential vectors can be created with <code>:</code></li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>a &lt;- 1:5</pre>
+
+<ul>
+<li>Create longer vectors by combining smaller vectors</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>b &lt;- c(a, 6, 7, 8)</pre>
+
+<h3>Types</h3>
+
+<div class="columns-3">
+<ul>
+<li>integer</li>
+<li>numeric</li>
+<li>logical</li>
+<li>list (i.e. anything)</li>
+<li><em>language</em></li>
+</ul></div>
+
+</article></slide><slide class=""><hgroup><h2>Vector Operations</h2></hgroup><article  class="build" id="vector-operations">
+
+<pre class = 'prettyprint lang-r'># Comments use the &#39;#&#39; character</pre>
+
+<pre class = 'prettyprint lang-r'># Most operations are obvious
+length(b)</pre>
+
+<pre >## [1] 8</pre>
+
+<pre class = 'prettyprint lang-r'>sort(b)</pre>
+
+<pre >## [1] 1 2 3 4 5 6 7 8</pre>
+
+<pre class = 'prettyprint lang-r'>class(b)</pre>
+
+<pre >## [1] &quot;numeric&quot;</pre>
+
+</article></slide><slide class=""><hgroup><h2>Indexing (2-types)</h2></hgroup><article  class="build" id="indexing-2-types">
+
+<div class="columns-2">
+<div class="column">
+<ul>
+<li><code>[</code> - subsetting
+
+<ul>
+<li>preserves class</li>
+<li>multiple indices</li>
+</ul></li>
+</ul></div>
+
+<div class="column">
+<ul>
+<li><code>[[</code> - extraction
+
+<ul>
+<li>no guarantee of class</li>
+<li>single index</li>
+</ul></li>
+</ul></div></div>
+
+<pre class = 'prettyprint lang-r'># A list holds anything
+a &lt;- list(first=1L, second=2, FALSE)</pre>
+
+<div class="columns-2">
+<div class="column">
+<pre class = 'prettyprint lang-r'># by position
+class(a[1])</pre>
+
+<pre >## [1] &quot;list&quot;</pre>
+
+<pre class = 'prettyprint lang-r'># by name
+class(a[&#39;second&#39;])</pre>
+
+<pre >## [1] &quot;list&quot;</pre></div>
+
+<div class="column">
+<pre class = 'prettyprint lang-r'># by position
+class(a[[1]])</pre>
+
+<pre >## [1] &quot;integer&quot;</pre>
+
+<pre class = 'prettyprint lang-r'># by name
+class(a[[&#39;second&#39;]])</pre>
+
+<pre >## [1] &quot;numeric&quot;</pre></div></div>
+
+</article></slide><slide class=""><hgroup><h2><code>$</code> Indexing</h2></hgroup><article  id="indexing">
+
+<p>lists may also be indexed by the <code>$</code> sign.</p>
+
+<p><em>But be careful not all vectors can be.</em></p>
+
+<pre class = 'prettyprint lang-r'>a$first</pre>
+
+<pre >## [1] 1</pre>
+
+<pre class = 'prettyprint lang-r'>a$second</pre>
+
+<pre >## [1] 2</pre>
+
+<p>This comes in useful for data.</p>
+
+</article></slide><slide class=""><hgroup><h2>Data Types</h2></hgroup><article  id="data-types">
+
+<h3>Data for our purpose is:</h3>
+
+<ul class = 'build'>
+<li>A (named) list of variables,
+
+<ul>
+<li>where all variables have the same length;</li>
+</ul></li>
+<li>Rectangular with and rows as observations.
+
+<ul>
+<li>columns as variables <code>ncol(iris)=</code>5</li>
+<li>and rows as observations <code>nrow(iris)=</code>150</li>
+</ul></li>
+</ul></article></slide>
+
+
+  <slide class="backdrop"></slide>
+
+</slides>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+<!-- map slide visiblity events into shiny -->
+<script>
+  (function() {
+    if (window.jQuery) {
+       window.jQuery(document).on('slideleave', function(e) {
+         window.jQuery(e.target).trigger('hidden');
+      });
+       window.jQuery(document).on('slideenter', function(e) {
+         window.jQuery(e.target).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+</body>
+</html>
