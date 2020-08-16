@@ -1,0 +1,101 @@
+---
+title: "Getting Data"
+author: "Andrew Redd, PhD."
+date: "R Bootcamp 2020"
+output: 
+    ioslides_presentation:
+        logo: "images/U_Health_stacked_png_red.png"
+        theme: "paper"
+        css: "style.css"
+        keep_md: FALSE
+        md_extensions: 
+            - "+task_lists"
+            - "+multiline_tables"
+        includes:
+            in_header: timer.htm
+        standalone: TRUE
+        widescreen: TRUE
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+library(printr)
+library(tidyverse)
+knitr::opts_chunk$set(echo = TRUE, error=TRUE
+                     , class.error='error'
+                     , class.warning='warning'
+                     , class.message='message'
+                     , cache=TRUE)
+options( repos="https://cran.rstudio.org"
+       , width=60
+       )
+```
+# Getting Data
+
+![](images/datatable.png)
+
+
+## Local Data {.build}
+
+Most data in R is held locally (i.e. in memory).
+
+Most functions for reading data are simple and obviously named.
+
+* read.csv
+    - reads in a comma separated file. 
+* read.fwf
+    - reads fixed width format.
+
+## Task {.flexbox .vcenter}
+
+Find a function that reads in Microsoft Excel 'xlsx' files.  Refer back to the 
+[Resources slides](Resources.html) if you need.
+
+:::{#timer1 .timer onclick="startTimer()"}
+2:00
+:::
+
+
+## Possible Answers
+
+* [`readxl::read_excel()`](https://www.rdocumentation.org/packages/readxl/versions/1.3.1/topics/read_excel)
+* [`officer::read_excel()`](https://www.rdocumentation.org/packages/officer/versions/0.3.5/topics/read_xlsx)
+* [`openxlsx::read.xlsx()`](https://www.rdocumentation.org/packages/openxlsx/versions/4.1.0.1/topics/read.xlsx)
+* [`xlsx::read.xlsx()`](https://www.rdocumentation.org/packages/xlsx/versions/0.6.1/topics/read.xlsx)
+
+
+## Ebola Data
+
+The first data set we will use comes from the [Humanitarian Data Exchange](https://data.humdata.org/dataset/ebola-cases-2014).  
+It consists of the number of Ebola cases and deaths broken down by 
+confirmed, probable and suspected.
+
+::: notes
+This is a good case of slightly messy data that will need a bit of 
+cleaning before it is really usable.
+:::
+
+
+## Read in the data
+
+```{r "reading in the data"}
+ebola.data.raw <- readxl::read_excel("data/ebola-cases-and-deaths-who-gar-sitrep.xlsx")
+head(ebola.data.raw)
+```
+
+## Problem {.flexbox .vcenter .build}
+
+This is only one sheet 🙁
+
+![](images/get_all_the_data.jpg)
+
+## Read all the data {.build}
+
+```{r "Read ALL the data"}
+library(readxl)
+library(purrr)
+data.file <- "data/ebola-cases-and-deaths-who-gar-sitrep.xlsx"
+sheets <- excel_sheets(data.file)
+all.ebola.raw.data <- map(sheets, read_excel, path=data.file) %>% 
+    set_names(sheets)
+```

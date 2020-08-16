@@ -28,6 +28,10 @@ This will be short, I promise.
 
 Comments are started by the `#` character
 
+```{r Comments}
+# Comments use the '#' character
+```
+
 Some comments have special meaning.
 
 >    - `#'` documentation comment
@@ -72,7 +76,7 @@ hello_world <- function(who = 'world', how = 'hello'){
 hello_world()
 ```
 
-## Vectors {.build}
+## Data Types: Vectors {.build}
 
 * In R everything is a vector
 * Sequential vectors can be created with `:`
@@ -84,7 +88,7 @@ a <- 1:5
 b <- c(a, 6, 7, 8)
 ```
 
-### Types 
+### Types, i.e. Mode 
 :::{.columns-3}
 * integer
 * numeric
@@ -95,9 +99,6 @@ b <- c(a, 6, 7, 8)
 
 ## Vector Operations {.build}
 
-```{r Comments}
-# Comments use the '#' character
-```
 ```{r "Obvious Operators"}
 # Most operations are obvious
 length(b)
@@ -165,3 +166,18 @@ This comes in useful for data.
 > * Rectangular with  and rows as observations.
 >   - columns as variables `ncol(iris)=``r ncol(iris)`
 >   - and rows as observations `nrow(iris)=``r nrow(iris)`
+
+## SPECIAL: The Pipe `%>%`
+
+The pipe is a newer but very handy tool in R.
+
+Use it to tie multiple short statements together into a single 
+complex statement that is easy to understand and use. 
+It comes from the `magrittr` package but it is more common to use it through the tidyverse package, which will be covered in detail later.
+```{r "Pipe operator"}
+library(tidyverse)
+iris %>% #< take iris data
+    filter(Species=='setosa') %>% #< perform a filter
+    nrow() #< count the rows.
+```
+

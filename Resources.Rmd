@@ -17,182 +17,82 @@ output:
         widescreen: TRUE
 ---
 
-# R Foundation Principles
+# Resources 
+[![](https://www.azquotes.com/picture-quotes/quote-know-where-to-find-the-information-and-how-to-use-it-that-s-the-secret-of-success-albert-einstein-78-30-95.jpg){.fullwidth}](https://www.azquotes.com/quote/783095)
 
-![](images/R_logo.svg)
+## Help files
 
-## R is Open
+> * Use `?` for finding the help of a function.
+>   - `?help`
+>   - `package?stats`
+> * Use `??` for searching
+> * Can't remember the name of that function?  
+>   That's what `aprops` is for.
+>     - `apropos("print")`
 
-![](images/GNU.svg){.float-right}
+## Help files
 
-* R is GNU
-* R is open source
-    + Source code is almost always available
-    + Easy to audit
+* Use `?` for finding the help of a function.
+  - `?help`
+  - `package?stats`
+* Use `??` for searching
+* Can't remember the name of that function?  
+  That's what `aprops` is for.
+  - `apropos("print")`
+ 
+### Caveat 
 
-## R is collaborative
-
-> * [CRAN](https://cran.r-project.org/) stands for: Comprehensive R Archive Network
->     + is the main repository for contributed R Packages.
->     + There are currently `r nrow(utils::available.packages())` packages available on CRAN.
->     + Low bar to get in.
->     + Anyone can contribute.
-> * [BioConductor](http://www.bioconductor.org/)
->     + Additional Repository specializing in high throughput genomic data packages.
->     + Much more rigorous to gain entry to.
-> * [GitHub](https://github.com/search/advanced)
->     + Where most new R work in completed.
-
-:::notes
-Packages are essentially a collection of functions together in a
-namespace.  We will talk about namespaces a little more later but
-the important this to know here is how to find functions and
-packages.
-:::
-
-## R is a Multi-Paradigm Programming Language
-
-* Imperative & Declarative
-* Functional & Object-oriented
-* Procedural & Reflective
-* Interpreted & Compiled.
-* But above all **Data-centric*
-
-## R is a Multi-Paradigm Programming Language
-
-* **Imperative & Declarative**
-* **Functional & Object-oriented**
-* Procedural & Reflective
-* Interpreted & Compiled.
-* But above all **Data-centric*
-
-## Imperative vs. Declarative
-
-In **imperative** languages you tell the computer *how* you want something done.
-
-In **declarative** languages you tell the compute *what* you want done.
-
->  "You can tell me what to do or how to do it but not both"
-
-## Imperative Languages
-
-> "How to do it"
-
-### Examples
-
-* [C](https://en.wikipedia.org/wiki/The_C_Programming_Language)
-* [Fortran](https://en.wikipedia.org/wiki/Fortran)
-* [Assembly](https://en.wikipedia.org/wiki/Assembly_language)
-
-### R
-```{r "example of imperative language", purl=FALSE}
-x <- 1:100
-total = 0
-for (i in x)
-    total <- total + i
-```
-
-Your total is `r total`.
-
-## Declarative Languages
-
-> "What to do"
-
-### Examples
-
-* SQL
-    + Give me a data set that contains everyone born in or after the year 2000.
-* SAS
-    + Perform a `PROC FREQ` to give me a count of birth years.
-
-### R
-```r
-filter(data, dob >= "2000-01-01")
-count(data, year(dob))
-```
-
-## Functional vs. Object
-
-**Functional** paradigm centers around functions and connecting them together;
-output from one is input to another.
-Output depends only on the input, i.e. idempotent.
-
-* May not **ever** change the inputs to a function.
-* Minimize side effects and state changes.
-
-**Object** oriented programming centers around objects and having objects
-perform actions.
-
-* Centers around state changes and side effects.
-* An argument to a function often is changed by the function.
-
-## Functional Languages
-
-* Never changes the inputs
-* you want something changed, explicitly say so
-
-### Examples
-* [Lisp](https://en.wikipedia.org/wiki/Common_Lisp)
-* [JavaScript](https://en.wikipedia.org/wiki/JavaScript)
-
-### R
-```r
-filter(iris, Species == "setosa")         #< Does nothing
-iris <- filter(iris, Species == "setosa") #< Actually filters
-```
-
-## Object Oriented Programming
-
-[![](https://www.azquotes.com/picture-quotes/quote-object-oriented-programming-is-an-exceptionally-bad-idea-which-could-only-have-originated-edsger-dijkstra-7-85-25.jpg){.fullpage}](https://www.azquotes.com/quote/78525)
-
-## Object Oriented Programming
-[![](https://www.azquotes.com/picture-quotes/quote-i-used-to-be-enamored-of-object-oriented-programming-i-m-now-finding-myself-leaning-eric-allman-93-23-34.jpg){.fullpage}](https://www.azquotes.com/quote/932334)
+Documentation for only those packages that are loaded and/or installed.
 
 
-## {.flexbox .vcenter}
+## Online documentation {.flexbox .vcenter}
 
-So what?
+[![RDocumentation.org](images/RDocumentation.org.png)](https://www.rdocumentation.org/)
 
-## Why this maters if you are coming from SAS
+## Tasks
 
-* R is **VERY** different than SAS.
-* You will have to step back from the Data step/Proc paradigm
-* More procedures and structures less declarations.
+[![RDocumentation.org](images/RDocumentation.org.png){.float-right}](https://www.rdocumentation.org/)
 
-## Why this maters if you are coming from STATA
+Using R documentation
 
-* Data is an object in R
-* There is no 'active' data set.
+* [ ] Find a function that performs a t-test.
+* [ ] Find 3 different functions that performs the Wilcoxon rank sum test.
+* [ ] Find the list of packages that I have on CRAN.
 
-## Why this maters to everybody
+## Answers
 
-* Knowing how a language is designed makes you more effective with it.
+* [x] Find a function that performs a t-test.
+    - [`stats::t.test()`](https://www.rdocumentation.org/packages/stats/versions/3.6.1/topics/t.test)
+    - [`stats::pairwise.t.test()`](https://www.rdocumentation.org/packages/stats/versions/3.6.1/topics/pairwise.t.test)
+    - [`rgr::gx.t.test()`](https://www.rdocumentation.org/packages/rgr/versions/1.1.15/topics/gx.t.test)
+    - [`rt.test::rt.test()`](https://www.rdocumentation.org/packages/rt.test/versions/1.18.7.9/topics/Robustified-t-test)
 
-[![](https://www.azquotes.com/picture-quotes/quote-you-d-be-surprised-how-many-people-violate-this-simple-principle-every-day-of-their-benjamin-hoff-39-57-21.jpg){.fullwidth}](https://www.azquotes.com/quote/395721)
+## Answers
 
-# How I teach R
-[![](https://www.azquotes.com/picture-quotes/quote-the-president-took-the-advice-of-my-east-texas-grandmother-if-you-can-skin-a-cat-without-richard-land-90-66-68.jpg){.fullwidth}](https://www.azquotes.com/quote/906668)
+- [x] Find a function that performs a t-test.
+- [x] Find 3 different functions that performs the Wilcoxon rank sum test.
+    + [`stats::wilcox.test()`](https://www.rdocumentation.org/packages/stats/versions/3.6.1/topics/wilcox.test)
+    + [`PASWR::wilcoxE.test()`](https://www.rdocumentation.org/packages/PASWR/versions/1.1/topics/wilcoxE.test)
+    + [`exactRankTests::wilcox.exact()`](https://www.rdocumentation.org/packages/exactRankTests/versions/0.8-30/topics/wilcox.exact)
 
-<div class="notes">
-Now that you know the basics of R ...
-</div>
+## Answers
 
+- [x] Find a function that performs a t-test.
+- [x] Find 3 different functions that performs the Wilcoxon rank sum test.
+- [x] Find the list of packages that I have on CRAN.
+    + https://www.rdocumentation.org/collaborators/name/Andrew%20Redd
 
-## How I teach R
+## Asking Questions
 
-> * The way I use R
->   - Programmer time is most important.
->   - Simplest is very often the fastest computationaly as well
->   - Reuse of code.
-> * Data focused
->   - results not details
-> * Base R
->   - Because you need to know this to be effective.
-> * Tidyverse
->   - Because this is better.
+The best place for getting questions answered is
 
-## In this class R is
+[![StackOverflow](images/so-logo.png){.fullwidth}](https://stackoverflow.com/questions/tagged/r?tab=Newest)
 
-* Functional,
-* Imperative, and
-* Declarative.
+But be sure to use search with the `[r]` or `[rstats]` tags to find R specific information.
+
+## R Related news
+
+* search ![](images/twitter.svg) with the hashtag [`#rstats`](https://twitter.com/search?q=%23rstats)
+* [The R Journal](https://journal.r-project.org/)
+* [![](images/R-bloggers.png)](https://www.r-bloggers.com/)
+

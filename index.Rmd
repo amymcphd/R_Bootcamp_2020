@@ -12,4 +12,26 @@ This webpage will be your guide to this course. Please Start by reading the
 
 ## Slides
 
+* [Introductions](Introductions.html)
+* [Principles](Principles.html)
+* [Resources](Resources.html)
+* [Syntax & Data Structures](Syntax.html)
+* [Packages](Packages.html)
+
+
+## Data
+
+* Ebola Data
+    + [Source](https://data.humdata.org/dataset/ebola-cases-2014) - The Humanitarian Data Exchange       
+    + [Data](https://github.com/halpo/R_Bootcamp_2020/raw/master/data/ebola-cases-and-deaths-who-gar-sitrep.xlsx)
+* Bourdeaux Wine Data
+    + [Source](https://link.springer.com/book/10.1007/978-0-387-09608-7) - 
+        Sheather, Simon. *A modern approach to regression with R.* Springer Science & Business Media, 2009.
+    + [Data](https://github.com/halpo/R_Bootcamp_2020/raw/master/data/Bordeaux.csv)
+
+## Videos
+
+
+
+
 

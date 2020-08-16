@@ -66,7 +66,7 @@ function( dir = '.'
         ) {
     force(commit_message)
     cli::cat_rule("Commiting updated site", line = 1)
-    with_dir(dir, {
+    withr::with_dir(dir, {
         git("add", "-A", ".")
         git("commit", "--allow-empty", "-m",
             commit_message)
@@ -102,6 +102,7 @@ function( dir = "."
 
     # write_lines(paste("output_dir:",shQuote(gsub("/", "\\\\\\\\", fs::path_norm(dest_dir)))), "_site.yml", append=TRUE)
     rmarkdown::render_site(dir)
+    file.copy(list.files("_site", full.names=TRUE), dest_dir, recursive=TRUE)
 
     # git("checkout", "_site.yml")
 

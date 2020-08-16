@@ -61,18 +61,21 @@ All are time permitting and we may not get to some of the later ones.
     c. Control Stuctures
     d. Functions
     e. Formulas, Specials, and R Uniqueness
-5. [Data Structure in R](Syntax.html)
+5. [Data Structure in R](Syntax.html#2)
     a. Vectors & matrices
     b. Lists
     c. Data Frames
     d. S3, S4, R5, R6, & Others
-    d. Tibbles, Data Abstraction, & the Tidyverse
-6. Packages, CRAN, BioConductor, and GitHub
-7. Where to get help, your resources
+    d. [Tibbles, Data Abstraction, & the Tidyverse](Tidyverse.html)
+6. [Packages and GitHub](Packages.html#2)
+    - [CRAN](https://cran.r-project.org)
+    - [BioConductor](https://www.bioconductor.org/)\
+    - [GitHub](https://github.com/search?q=language%3AR&type=Repositories&ref=advsearch&l=R&l=)
+7. [Where to get help, your resources](Resources.html#2)
     * Help files
-    * Rdocumentation.org - Online Help files
-    * StackOverflow
-    * Mailing lists
+    * [Rdocumentation.org](https://Rdocumentation.org) - Online Help files
+    * [StackOverflow](https://stackoverflow.com/questions/tagged/rlang)
+    * [Mailing lists](https://www.r-project.org/mail.html)
     * Other sites
 8. Getting Data
     * Data Sources

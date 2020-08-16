@@ -32,23 +32,12 @@ output:
 
 ## R is collaborative
 
-> * [CRAN](https://cran.r-project.org/) stands for: Comprehensive R Archive Network
->     + is the main repository for contributed R Packages.
->     + There are currently `r nrow(utils::available.packages())` packages available on CRAN.
->     + Low bar to get in.
->     + Anyone can contribute.
-> * [BioConductor](http://www.bioconductor.org/)
->     + Additional Repository specializing in high throughput genomic data packages.
->     + Much more rigorous to gain entry to.
-> * [GitHub](https://github.com/search/advanced)
->     + Where most new R work in completed.
+### Packages
+Packages are collections of functions put together by other programmers for your use. (You can also publish packages.)
 
-:::notes
-Packages are essentially a collection of functions together in a
-namespace.  We will talk about namespaces a little more later but
-the important this to know here is how to find functions and
-packages.
-:::
+ * [CRAN](https://cran.r-project.org/) stands for: Comprehensive  * [BioConductor](http://www.bioconductor.org/)
+ * [GitHub](https://github.com/search/advanced)
+
 
 ## R is a Multi-Paradigm Programming Language
 
