@@ -198,6 +198,8 @@ slide:not(.current) .plotly.html-widget{
 
 <p>Comments are started by the <code>#</code> character</p>
 
+<pre class = 'prettyprint lang-r'># Comments use the &#39;#&#39; character</pre>
+
 <p>Some comments have special meaning.</p>
 
 <ul class = 'build'>
@@ -259,7 +261,7 @@ slide:not(.current) .plotly.html-widget{
 
 <pre >## [1] &quot;hello world&quot;</pre>
 
-</article></slide><slide class=""><hgroup><h2>Vectors</h2></hgroup><article  class="build" id="vectors">
+</article></slide><slide class=""><hgroup><h2>Data Types: Vectors</h2></hgroup><article  class="build" id="data-types-vectors">
 
 <ul>
 <li>In R everything is a vector</li>
@@ -274,7 +276,7 @@ slide:not(.current) .plotly.html-widget{
 
 <pre class = 'prettyprint lang-r'>b &lt;- c(a, 6, 7, 8)</pre>
 
-<h3>Types</h3>
+<h3>Types, i.e. Mode</h3>
 
 <div class="columns-3">
 <ul>
@@ -286,8 +288,6 @@ slide:not(.current) .plotly.html-widget{
 </ul></div>
 
 </article></slide><slide class=""><hgroup><h2>Vector Operations</h2></hgroup><article  class="build" id="vector-operations">
-
-<pre class = 'prettyprint lang-r'># Comments use the &#39;#&#39; character</pre>
 
 <pre class = 'prettyprint lang-r'># Most operations are obvious
 length(b)</pre>
@@ -383,7 +383,20 @@ class(a[[&#39;second&#39;]])</pre>
 <li>columns as variables <code>ncol(iris)=</code>5</li>
 <li>and rows as observations <code>nrow(iris)=</code>150</li>
 </ul></li>
-</ul></article></slide>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>SPECIAL: The Pipe <code>%&gt;%</code></h2></hgroup><article  id="special-the-pipe">
+
+<p>The pipe is a newer but very handy tool in R.</p>
+
+<p>Use it to tie multiple short statements together into a single complex statement that is easy to understand and use. It comes from the <code>magrittr</code> package but it is more common to use it through the tidyverse package, which will be covered in detail later.</p>
+
+<pre class = 'prettyprint lang-r'>library(tidyverse)
+iris %&gt;% #&lt; take iris data
+    filter(Species==&#39;setosa&#39;) %&gt;% #&lt; perform a filter
+    nrow() #&lt; count the rows.</pre>
+
+<pre >## [1] 50</pre></article></slide>
 
 
   <slide class="backdrop"></slide>

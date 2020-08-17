@@ -187,238 +187,116 @@ slide:not(.current) .plotly.html-widget{
           </hgroup>
   </slide>
 
-<slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>R Foundation Principles</h2></hgroup><article  id="r-foundation-principles">
+<slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Resources</h2></hgroup><article  id="resources">
 
-<img src='images/R_logo.svg' title=''/>
+<p><a href='https://www.azquotes.com/quote/783095' title=''><img class="fullwidth" src='https://www.azquotes.com/picture-quotes/quote-know-where-to-find-the-information-and-how-to-use-it-that-s-the-secret-of-success-albert-einstein-78-30-95.jpg' title=''/></a></p>
 
-</article></slide><slide class=""><hgroup><h2>R is Open</h2></hgroup><article  id="r-is-open">
-
-<img class="float-right" src='images/GNU.svg' title=''/>
-
-<ul>
-<li>R is GNU</li>
-<li>R is open source
-
-<ul>
-<li>Source code is almost always available</li>
-<li>Easy to audit</li>
-</ul></li>
-</ul>
-
-</article></slide><slide class=""><hgroup><h2>R is collaborative</h2></hgroup><article  id="r-is-collaborative">
+</article></slide><slide class=""><hgroup><h2>Help files</h2></hgroup><article  id="help-files">
 
 <ul class = 'build'>
-<li><a href='https://cran.r-project.org/' title=''>CRAN</a> stands for: Comprehensive R Archive Network
+<li>Use <code>?</code> for finding the help of a function.
 
 <ul>
-<li>is the main repository for contributed R Packages.</li>
-<li>There are currently 16021 packages available on CRAN.</li>
-<li>Low bar to get in.</li>
-<li>Anyone can contribute.</li>
+<li><code>?help</code></li>
+<li><code>package?stats</code></li>
 </ul></li>
-<li><a href='http://www.bioconductor.org/' title=''>BioConductor</a>
+<li>Use <code>??</code> for searching</li>
+<li>Can’t remember the name of that function?<br/>That’s what <code>aprops</code> is for.
 
 <ul>
-<li>Additional Repository specializing in high throughput genomic data packages.</li>
-<li>Much more rigorous to gain entry to.</li>
-</ul></li>
-<li><a href='https://github.com/search/advanced' title=''>GitHub</a>
-
-<ul>
-<li>Where most new R work in completed.</li>
+<li><code>apropos(&quot;print&quot;)</code></li>
 </ul></li>
 </ul>
 
-<aside class='note'><section><p>Packages are essentially a collection of functions together in a namespace. We will talk about namespaces a little more later but the important this to know here is how to find functions and packages.</p></section></aside>
-
-</article></slide><slide class=""><hgroup><h2>R is a Multi-Paradigm Programming Language</h2></hgroup><article  id="r-is-a-multi-paradigm-programming-language">
+</article></slide><slide class=""><hgroup><h2>Help files</h2></hgroup><article  id="help-files-1">
 
 <ul>
-<li>Imperative &amp; Declarative</li>
-<li>Functional &amp; Object-oriented</li>
-<li>Procedural &amp; Reflective</li>
-<li>Interpreted &amp; Compiled.</li>
-<li>But above all **Data-centric*</li>
-</ul>
-
-</article></slide><slide class=""><hgroup><h2>R is a Multi-Paradigm Programming Language</h2></hgroup><article  id="r-is-a-multi-paradigm-programming-language-1">
+<li>Use <code>?</code> for finding the help of a function.
 
 <ul>
-<li><strong>Imperative &amp; Declarative</strong></li>
-<li><strong>Functional &amp; Object-oriented</strong></li>
-<li>Procedural &amp; Reflective</li>
-<li>Interpreted &amp; Compiled.</li>
-<li>But above all **Data-centric*</li>
-</ul>
-
-</article></slide><slide class=""><hgroup><h2>Imperative vs. Declarative</h2></hgroup><article  id="imperative-vs.-declarative">
-
-<p>In <strong>imperative</strong> languages you tell the computer <em>how</em> you want something done.</p>
-
-<p>In <strong>declarative</strong> languages you tell the compute <em>what</em> you want done.</p>
-
-<blockquote>
-<p>&ldquo;You can tell me what to do or how to do it but not both&rdquo;</p>
-</blockquote>
-
-</article></slide><slide class=""><hgroup><h2>Imperative Languages</h2></hgroup><article  id="imperative-languages">
-
-<blockquote>
-<p>&ldquo;How to do it&rdquo;</p>
-</blockquote>
-
-<h3>Examples</h3>
-
-<ul>
-<li><a href='https://en.wikipedia.org/wiki/The_C_Programming_Language' title=''>C</a></li>
-<li><a href='https://en.wikipedia.org/wiki/Fortran' title=''>Fortran</a></li>
-<li><a href='https://en.wikipedia.org/wiki/Assembly_language' title=''>Assembly</a></li>
-</ul>
-
-<h3>R</h3>
-
-<pre class = 'prettyprint lang-r'>x &lt;- 1:100
-total = 0
-for (i in x)
-    total &lt;- total + i</pre>
-
-<p>Your total is 5050.</p>
-
-</article></slide><slide class=""><hgroup><h2>Declarative Languages</h2></hgroup><article  id="declarative-languages">
-
-<blockquote>
-<p>&ldquo;What to do&rdquo;</p>
-</blockquote>
-
-<h3>Examples</h3>
-
-<ul>
-<li>SQL
-
-<ul>
-<li>Give me a data set that contains everyone born in or after the year 2000.</li>
+<li><code>?help</code></li>
+<li><code>package?stats</code></li>
 </ul></li>
-<li>SAS
+<li>Use <code>??</code> for searching</li>
+<li>Can’t remember the name of that function?<br/>That’s what <code>aprops</code> is for.
 
 <ul>
-<li>Perform a <code>PROC FREQ</code> to give me a count of birth years.</li>
+<li><code>apropos(&quot;print&quot;)</code></li>
 </ul></li>
 </ul>
 
-<h3>R</h3>
+<h3>Caveat</h3>
 
-<pre class = 'prettyprint lang-r'>filter(data, dob &gt;= &quot;2000-01-01&quot;)
-count(data, year(dob))</pre>
+<p>Documentation for only those packages that are loaded and/or installed.</p>
 
-</article></slide><slide class=""><hgroup><h2>Functional vs. Object</h2></hgroup><article  id="functional-vs.-object">
+</article></slide><slide class=""><hgroup><h2>Online documentation</h2></hgroup><article  class="flexbox vcenter" id="online-documentation">
 
-<p><strong>Functional</strong> paradigm centers around functions and connecting them together; output from one is input to another. Output depends only on the input, i.e. idempotent.</p>
+<p><a href='https://www.rdocumentation.org/' title=''><img src='images/RDocumentation.org.png' title=''/></a></p>
+
+</article></slide><slide class=""><hgroup><h2>Tasks</h2></hgroup><article  id="tasks">
+
+<p><a href='https://www.rdocumentation.org/' title=''><img class="float-right" src='images/RDocumentation.org.png' title=''/></a></p>
+
+<p>Using R documentation</p>
 
 <ul>
-<li>May not <strong>ever</strong> change the inputs to a function.</li>
-<li>Minimize side effects and state changes.</li>
+<li>☐ Find a function that performs a t-test.</li>
+<li>☐ Find 3 different functions that performs the Wilcoxon rank sum test.</li>
+<li>☐ Find the list of packages that I have on CRAN.</li>
 </ul>
 
-<p><strong>Object</strong> oriented programming centers around objects and having objects perform actions.</p>
+</article></slide><slide class=""><hgroup><h2>Answers</h2></hgroup><article  id="answers">
 
 <ul>
-<li>Centers around state changes and side effects.</li>
-<li>An argument to a function often is changed by the function.</li>
-</ul>
-
-</article></slide><slide class=""><hgroup><h2>Functional Languages</h2></hgroup><article  id="functional-languages">
+<li>☒ Find a function that performs a t-test.
 
 <ul>
-<li>Never changes the inputs</li>
-<li>you want something changed, explicitly say so</li>
-</ul>
-
-<h3>Examples</h3>
-
-<ul>
-<li><a href='https://en.wikipedia.org/wiki/Common_Lisp' title=''>Lisp</a></li>
-<li><a href='https://en.wikipedia.org/wiki/JavaScript' title=''>JavaScript</a></li>
-</ul>
-
-<h3>R</h3>
-
-<pre class = 'prettyprint lang-r'>filter(iris, Species == &quot;setosa&quot;)         #&lt; Does nothing
-iris &lt;- filter(iris, Species == &quot;setosa&quot;) #&lt; Actually filters</pre>
-
-</article></slide><slide class=""><hgroup><h2>Object Oriented Programming</h2></hgroup><article  id="object-oriented-programming">
-
-<p><a href='https://www.azquotes.com/quote/78525' title=''><img class="fullpage" src='https://www.azquotes.com/picture-quotes/quote-object-oriented-programming-is-an-exceptionally-bad-idea-which-could-only-have-originated-edsger-dijkstra-7-85-25.jpg' title=''/></a></p>
-
-</article></slide><slide class=""><hgroup><h2>Object Oriented Programming</h2></hgroup><article  id="object-oriented-programming-1">
-
-<p><a href='https://www.azquotes.com/quote/932334' title=''><img class="fullpage" src='https://www.azquotes.com/picture-quotes/quote-i-used-to-be-enamored-of-object-oriented-programming-i-m-now-finding-myself-leaning-eric-allman-93-23-34.jpg' title=''/></a></p>
-
-</article></slide><slide class=""><hgroup><h2></h2></hgroup><article  id="section" class="flexbox vcenter">
-
-<p>So what?</p>
-
-</article></slide><slide class=""><hgroup><h2>Why this maters if you are coming from SAS</h2></hgroup><article  id="why-this-maters-if-you-are-coming-from-sas">
-
-<ul>
-<li>R is <strong>VERY</strong> different than SAS.</li>
-<li>You will have to step back from the Data step/Proc paradigm</li>
-<li>More procedures and structures less declarations.</li>
-</ul>
-
-</article></slide><slide class=""><hgroup><h2>Why this maters if you are coming from STATA</h2></hgroup><article  id="why-this-maters-if-you-are-coming-from-stata">
-
-<ul>
-<li>Data is an object in R</li>
-<li>There is no &lsquo;active&rsquo; data set.</li>
-</ul>
-
-</article></slide><slide class=""><hgroup><h2>Why this maters to everybody</h2></hgroup><article  id="why-this-maters-to-everybody">
-
-<ul>
-<li>Knowing how a language is designed makes you more effective with it.</li>
-</ul>
-
-<p><a href='https://www.azquotes.com/quote/395721' title=''><img class="fullwidth" src='https://www.azquotes.com/picture-quotes/quote-you-d-be-surprised-how-many-people-violate-this-simple-principle-every-day-of-their-benjamin-hoff-39-57-21.jpg' title=''/></a></p>
-
-</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>How I teach R</h2></hgroup><article  id="how-i-teach-r">
-
-<p><a href='https://www.azquotes.com/quote/906668' title=''><img class="fullwidth" src='https://www.azquotes.com/picture-quotes/quote-the-president-took-the-advice-of-my-east-texas-grandmother-if-you-can-skin-a-cat-without-richard-land-90-66-68.jpg' title=''/></a></p>
-
-<aside class='note'><section><p>Now that you know the basics of R …</p></section></aside>
-
-</article></slide><slide class=""><hgroup><h2>How I teach R</h2></hgroup><article  id="how-i-teach-r-1">
-
-<ul class = 'build'>
-<li>The way I use R
-
-<ul>
-<li>Programmer time is most important.</li>
-<li>Simplest is very often the fastest computationaly as well</li>
-<li>Reuse of code.</li>
-</ul></li>
-<li>Data focused
-
-<ul>
-<li>results not details</li>
-</ul></li>
-<li>Base R
-
-<ul>
-<li>Because you need to know this to be effective.</li>
-</ul></li>
-<li>Tidyverse
-
-<ul>
-<li>Because this is better.</li>
+<li><a href='https://www.rdocumentation.org/packages/stats/versions/3.6.1/topics/t.test' title=''><code>stats::t.test()</code></a></li>
+<li><a href='https://www.rdocumentation.org/packages/stats/versions/3.6.1/topics/pairwise.t.test' title=''><code>stats::pairwise.t.test()</code></a></li>
+<li><a href='https://www.rdocumentation.org/packages/rgr/versions/1.1.15/topics/gx.t.test' title=''><code>rgr::gx.t.test()</code></a></li>
+<li><a href='https://www.rdocumentation.org/packages/rt.test/versions/1.18.7.9/topics/Robustified-t-test' title=''><code>rt.test::rt.test()</code></a></li>
 </ul></li>
 </ul>
 
-</article></slide><slide class=""><hgroup><h2>In this class R is</h2></hgroup><article  id="in-this-class-r-is">
+</article></slide><slide class=""><hgroup><h2>Answers</h2></hgroup><article  id="answers-1">
 
 <ul>
-<li>Functional,</li>
-<li>Imperative, and</li>
-<li>Declarative.</li>
+<li>☒ Find a function that performs a t-test.</li>
+<li>☒ Find 3 different functions that performs the Wilcoxon rank sum test.
+
+<ul>
+<li><a href='https://www.rdocumentation.org/packages/stats/versions/3.6.1/topics/wilcox.test' title=''><code>stats::wilcox.test()</code></a></li>
+<li><a href='https://www.rdocumentation.org/packages/PASWR/versions/1.1/topics/wilcoxE.test' title=''><code>PASWR::wilcoxE.test()</code></a></li>
+<li><a href='https://www.rdocumentation.org/packages/exactRankTests/versions/0.8-30/topics/wilcox.exact' title=''><code>exactRankTests::wilcox.exact()</code></a></li>
+</ul></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Answers</h2></hgroup><article  id="answers-2">
+
+<ul>
+<li>☒ Find a function that performs a t-test.</li>
+<li>☒ Find 3 different functions that performs the Wilcoxon rank sum test.</li>
+<li>☒ Find the list of packages that I have on CRAN.
+
+<ul>
+<li><a href='https://www.rdocumentation.org/collaborators/name/Andrew%20Redd' title=''>https://www.rdocumentation.org/collaborators/name/Andrew%20Redd</a></li>
+</ul></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Asking Questions</h2></hgroup><article  id="asking-questions">
+
+<p>The best place for getting questions answered is</p>
+
+<p><a href='https://stackoverflow.com/questions/tagged/r?tab=Newest' title=''><img class="fullwidth" src='images/so-logo.png' title=''/></a></p>
+
+<p>But be sure to use search with the <code>[r]</code> or <code>[rstats]</code> tags to find R specific information.</p>
+
+</article></slide><slide class=""><hgroup><h2>R Related news</h2></hgroup><article  id="r-related-news">
+
+<ul>
+<li>search <img src='images/twitter.svg' title=''/> with the hashtag <a href='https://twitter.com/search?q=%23rstats' title=''><code>#rstats</code></a></li>
+<li><a href='https://journal.r-project.org/' title=''>The R Journal</a></li>
+<li><a href='https://www.r-bloggers.com/' title=''><img src='images/R-bloggers.png' title=''/></a></li>
 </ul></article></slide>
 
 
