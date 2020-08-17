@@ -17,6 +17,8 @@ This webpage will be your guide to this course. Please Start by reading the
 * [Resources](Resources.html)
 * [Syntax & Data Structures](Syntax.html)
 * [Packages](Packages.html)
+* [Tidyverse](Tidyverse.html)
+* [Getting Data](GettingData.html)
 
 
 ## Data
