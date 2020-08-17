@@ -77,7 +77,7 @@ All are time permitting and we may not get to some of the later ones.
     * [StackOverflow](https://stackoverflow.com/questions/tagged/rlang)
     * [Mailing lists](https://www.r-project.org/mail.html)
     * Other sites
-8. Getting Data
+8. [Getting Data](GettingData.html)
     * Data Sources
     * Reading Data
     * Saving Data

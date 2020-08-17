@@ -99,3 +99,132 @@ sheets <- excel_sheets(data.file)
 all.ebola.raw.data <- map(sheets, read_excel, path=data.file) %>% 
     set_names(sheets)
 ```
+
+
+### Variants
+
+:::::: {.columns-2}
+::: {.column}
+* `map()` = list,
+* `map_lgl()` = logical,
+* `map_int()` = integers,
+:::
+::: {.column}
+* `map_dbl()` = numbers,
+* `map_chr()` = strings.
+:::
+::::::
+
+## Quiz {.flexbox .vcenter .build}
+
+What form is the all.ebola.raw.data in?
+
+What form do we want it in?
+
+### Task
+
+Collapse it into a single data.frame
+
+## Possible solution {.build}
+
+Change the reading function
+```r
+all.ebola.raw.data <- 
+    excel_sheets(data.file) %>% #< sheet names
+    map_dfr(read_excel, path=data.file, .id = "sheet")
+```
+::: {.R-error}
+<p class="error-message">Column `Total deaths` can't be converted from numeric to character</p>
+:::
+
+## Another solution - Fix the output {.build}
+
+### 1. Investigate why it failed.
+```{r "Investigate why it failed", results='hide'}
+all.ebola.raw.data %>% keep(~is.character(.$`Total deaths`))
+```
+:::{.terminology}
+Lambda functions
+
+: Functions created from formulas(`~`) where the `.` is the argument.
+
+    `?rlang::is_lambda`
+:::
+
+### Problems
+1. Some variables are 'character' that should be 'numeric'
+2. Not all sheets have the same number of columns.
+
+:::notes
+Note everything in R supports lambda functions but they can be made
+explicit by wrapping it in `as_function()`.
+:::
+
+
+## Another solution - Fix the output {.build}
+
+### 2. Find the common variables
+
+```{r "Clean the output solution: Common Variables"}
+common.vars <- all.ebola.raw.data %>% 
+    # a. Get the variable names for for each sheet
+    map(tbl_vars) %>% 
+    # b. Only keep the variables that are common to all
+    reduce(intersect)
+```
+
+:::{.keyfunction}
+`reduce()`
+
+: Take the first two elements apply the function, then
+  take the output of that and the next element and apply the function,
+  and so on until all elements have had the function applied.
+  Return value of the last call.
+:::
+
+## Another solution - Fix the output {.build}
+
+### 3. Combine together
+
+```{r "Clean the output solution: Combine together"}
+all.ebola.raw.data.df <- all.ebola.raw.data %>% 
+    map(select, !!!common.vars) %>% 
+    map( mutate_at, vars(starts_with("Total"))
+       , ~as.integer(na_if(., '..'))) %>% 
+    bind_rows(.id = "SheetName")
+```
+
+:::{.terminology}
+Lazy evaluation
+
+: The select function expects unquoted variable names because it 
+  supports 'lazy evaluation'.  To over come this we need `!!!` or `!!`
+  to indicate that the name should be interpreted as an object
+  to be evaluated rather than a variable name directly.
+:::
+
+## Time for some clean up {.build}
+
+```{r "Clean the output solution: clean up" }
+ebola.data <- all.ebola.raw.data.df %>% 
+    # 1. Carry last value forward on date.
+    mutate(`Country Report Date` = zoo::na.locf(`Country Report Date`)) %>% 
+    # 2. Fill in the missing values with 0.
+    mutate_at(vars(starts_with("total")), coalesce, 0L)
+```
+
+::::::{.concept}
+Note the `0L` which indicates an integer zero.  If performed with the bare `0`
+the operation would fail with 
+
+:::{.R-error}
+Argument 2 must be an integer vector, not a double vector
+:::
+::::::
+
+## Save it for future use
+
+
+```{r "Save the data"}
+save(ebola.data, file='ebola.data.RData')
+```
