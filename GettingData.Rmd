@@ -25,7 +25,7 @@ knitr::opts_chunk$set(echo = TRUE, error=TRUE
                      , class.error='error'
                      , class.warning='warning'
                      , class.message='message'
-                     , cache=TRUE)
+                     , cache=FALSE)
 options( repos="https://cran.rstudio.org"
        , width=60
        )
@@ -226,5 +226,12 @@ Argument 2 must be an integer vector, not a double vector
 
 
 ```{r "Save the data"}
-save(ebola.data, file='ebola.data.RData')
+save(ebola.data, file='data/ebola.data.RData')
 ```
+ 
+ OR
+ 
+```{r "Save the data - rds"}
+saveRDS(ebola.data, file='data/ebola.data.rds')
+```
+ 
