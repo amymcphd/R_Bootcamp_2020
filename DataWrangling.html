@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Resources</title>
+  <title>Data Wrangling</title>
 
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="chrome=1">
@@ -19,12 +19,12 @@
     var SLIDE_CONFIG = {
       // Slide settings
       settings: {
-                title: 'Resources',
+                title: 'Data Wrangling',
                         useBuilds: true,
         usePrettify: true,
         enableSlideAreas: true,
         enableTouch: true,
-                        favIcon: 'Resources_files/logo.png',
+                        favIcon: 'DataWrangling_files/logo.png',
               },
 
       // Author information
@@ -157,7 +157,7 @@ slide:not(.current) .plotly.html-widget{
       position: absolute;
       bottom: 20px;
       left: 60px;
-      background: url(Resources_files/logo.png) no-repeat 0 50%;
+      background: url(DataWrangling_files/logo.png) no-repeat 0 50%;
       -webkit-background-size: 30px 30px;
       -moz-background-size: 30px 30px;
       -o-background-size: 30px 30px;
@@ -177,7 +177,7 @@ slide:not(.current) .plotly.html-widget{
 <slides class="layout-widescreen">
 
   <slide class="title-slide segue nobackground">
-        <aside class="gdbar"><img src="Resources_files/logo.png"></aside>
+        <aside class="gdbar"><img src="DataWrangling_files/logo.png"></aside>
         <!-- The content of this hgroup is replaced programmatically through the slide_config.json. -->
     <hgroup class="auto-fadein">
       <h1 data-config-title><!-- populated from slide_config.json --></h1>
@@ -187,117 +187,98 @@ slide:not(.current) .plotly.html-widget{
           </hgroup>
   </slide>
 
-<slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Resources</h2></hgroup><article  id="resources">
+<slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2></h2></hgroup><article  id="section">
 
-<p><a href='https://www.azquotes.com/quote/783095' title=''><img class="fullwidth" src='https://www.azquotes.com/picture-quotes/quote-know-where-to-find-the-information-and-how-to-use-it-that-s-the-secret-of-success-albert-einstein-78-30-95.jpg' title=''/></a></p>
+<img src='images/data_wrangler.png' title=''/>
 
-</article></slide><slide class=""><hgroup><h2>Help files</h2></hgroup><article  id="help-files">
-
-<ul class = 'build'>
-<li>Use <code>?</code> for finding the help of a function.
+</article></slide><slide class=""><hgroup><h2>Manipulations</h2></hgroup><article  id="manipulations">
 
 <ul>
-<li><code>?help</code></li>
-<li><code>package?stats</code></li>
+<li>Data integrity</li>
+<li>Reshaping</li>
+<li>Filtering</li>
+<li>Merging</li>
+<li>Summarizing</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Packages that we will use</h2></hgroup><article  id="packages-that-we-will-use">
+
+<pre class = 'prettyprint lang-r'># Make tidyverse load quietly
+options(tidyverse.quiet = TRUE)
+library(tidyverse)   #&lt; General use
+library(tidyr)       #&lt; Reshaping
+library(wbstats)     #&lt; World bank data.
+library(countrycode) #&lt; Country coding
+library(assertthat)  #&lt; Results checking
+library(lubridate)   #&lt; Date manipulations
+requireNamespace(zoo)#&lt; time series</pre>
+
+<pre class = 'prettyprint lang-error'>## Error in requireNamespace(zoo): object &#39;zoo&#39; not found</pre>
+
+</article></slide><slide class=""><hgroup><h2>Loading data</h2></hgroup><article  id="loading-data">
+
+<p>for <code>.RData</code> files use <code>load()</code></p>
+
+<pre class = 'prettyprint lang-r'>load(&quot;data/ebola.data.RData&quot;)</pre>
+
+<p>for <code>.rds</code> files use <code>readRDS()</code> and capture the results in a variable.</p>
+
+<pre class = 'prettyprint lang-r'>ebola &lt;- readRDS(&quot;data/ebola.data.rds&quot;)</pre>
+
+</article></slide><slide class=""><hgroup><h2>Always check your data</h2></hgroup><article  class="build" id="always-check-your-data">
+
+<p>Any problems with the data?</p>
+
+<img src='images/shock.gif' title=''/>
+
+</article></slide><slide class=""><hgroup><h2>Ebola Data Problem</h2></hgroup><article  class="build" id="ebola-data-problem">
+
+<p>The Most obvious is that <code>Country Report Date</code> should be repeated down the rows.</p>
+
+<p>Fix with <code>dplyr::mutate()</code> + <code>zoo::na.locf()</code> (Missing last observation carried forward.)</p>
+
+<pre class = 'prettyprint lang-r'>ebola.data %&lt;&gt;% 
+    mutate_at(&#39;Country Report Date&#39;, zoo::na.locf)</pre>
+
+<h3>Notes:</h3>
+
+<ol>
+<li>We used the assign-back pipe <code>%&lt;&gt;%</code> to modify in place. <em>Generally this is frowned upon</em></li>
+<li>Note the double colon for using na.locf from zoo without attaching the package.</li>
+</ol>
+
+</article></slide><slide class=""><hgroup><h2>Reformatting data</h2></hgroup><article  id="reformatting-data">
+
+<ul>
+<li>Wide Data
+
+<ul>
+<li>multiple observations for one unit are in columns</li>
 </ul></li>
-<li>Use <code>??</code> for searching</li>
-<li>Can’t remember the name of that function?<br/>That’s what <code>aprops</code> is for.
+<li>Long Data
 
 <ul>
-<li><code>apropos(&quot;print&quot;)</code></li>
+<li>multiple observations for one unit are in rows.</li>
 </ul></li>
 </ul>
 
-</article></slide><slide class=""><hgroup><h2>Help files</h2></hgroup><article  id="help-files-1">
+</article></slide><slide class=""><hgroup><h2>Task make &lsquo;Case def.&rsquo; separate columns</h2></hgroup><article  class="build" id="task-make-case-def.-separate-columns">
 
-<ul>
-<li>Use <code>?</code> for finding the help of a function.
+<p>We would like to make <code>Case def.</code> separate columns there are however 3 possible response variables:</p>
 
-<ul>
-<li><code>?help</code></li>
-<li><code>package?stats</code></li>
-</ul></li>
-<li>Use <code>??</code> for searching</li>
-<li>Can’t remember the name of that function?<br/>That’s what <code>aprops</code> is for.
+<ol>
+<li>Total cases</li>
+<li>Cases last 21.days</li>
+<li>Total Deaths</li>
+</ol>
 
-<ul>
-<li><code>apropos(&quot;print&quot;)</code></li>
-</ul></li>
-</ul>
+<p>Options?</p>
 
-<h3>Caveat</h3>
-
-<p>Documentation for only those packages that are loaded and/or installed.</p>
-
-</article></slide><slide class=""><hgroup><h2>Online documentation</h2></hgroup><article  id="online-documentation" class="flexbox vcenter">
-
-<p><a href='https://www.rdocumentation.org/' title=''><img src='images/RDocumentation.org.png' title=''/></a></p>
-
-</article></slide><slide class=""><hgroup><h2>Tasks</h2></hgroup><article  id="tasks">
-
-<p><a href='https://www.rdocumentation.org/' title=''><img class="float-right" src='images/RDocumentation.org.png' title=''/></a></p>
-
-<p>Using R documentation</p>
-
-<ul>
-<li>☐ Find a function that performs a t-test.</li>
-<li>☐ Find 3 different functions that performs the Wilcoxon rank sum test.</li>
-<li>☐ Find the list of packages that I have on CRAN.</li>
-</ul>
-
-</article></slide><slide class=""><hgroup><h2>Answers</h2></hgroup><article  id="answers">
-
-<ul>
-<li>☒ Find a function that performs a t-test.
-
-<ul>
-<li><a href='https://www.rdocumentation.org/packages/stats/versions/3.6.1/topics/t.test' title=''><code>stats::t.test()</code></a></li>
-<li><a href='https://www.rdocumentation.org/packages/stats/versions/3.6.1/topics/pairwise.t.test' title=''><code>stats::pairwise.t.test()</code></a></li>
-<li><a href='https://www.rdocumentation.org/packages/rgr/versions/1.1.15/topics/gx.t.test' title=''><code>rgr::gx.t.test()</code></a></li>
-<li><a href='https://www.rdocumentation.org/packages/rt.test/versions/1.18.7.9/topics/Robustified-t-test' title=''><code>rt.test::rt.test()</code></a></li>
-</ul></li>
-</ul>
-
-</article></slide><slide class=""><hgroup><h2>Answers</h2></hgroup><article  id="answers-1">
-
-<ul>
-<li>☒ Find a function that performs a t-test.</li>
-<li>☒ Find 3 different functions that performs the Wilcoxon rank sum test.
-
-<ul>
-<li><a href='https://www.rdocumentation.org/packages/stats/versions/3.6.1/topics/wilcox.test' title=''><code>stats::wilcox.test()</code></a></li>
-<li><a href='https://www.rdocumentation.org/packages/PASWR/versions/1.1/topics/wilcoxE.test' title=''><code>PASWR::wilcoxE.test()</code></a></li>
-<li><a href='https://www.rdocumentation.org/packages/exactRankTests/versions/0.8-30/topics/wilcox.exact' title=''><code>exactRankTests::wilcox.exact()</code></a></li>
-</ul></li>
-</ul>
-
-</article></slide><slide class=""><hgroup><h2>Answers</h2></hgroup><article  id="answers-2">
-
-<ul>
-<li>☒ Find a function that performs a t-test.</li>
-<li>☒ Find 3 different functions that performs the Wilcoxon rank sum test.</li>
-<li>☒ Find the list of packages that I have on CRAN.
-
-<ul>
-<li><a href='https://www.rdocumentation.org/collaborators/name/Andrew%20Redd' title=''>https://www.rdocumentation.org/collaborators/name/Andrew%20Redd</a></li>
-</ul></li>
-</ul>
-
-</article></slide><slide class=""><hgroup><h2>Asking Questions</h2></hgroup><article  id="asking-questions">
-
-<p>The best place for getting questions answered is</p>
-
-<p><a href='https://stackoverflow.com/questions/tagged/r?tab=Newest' title=''><img class="fullwidth" src='images/so-logo.png' title=''/></a></p>
-
-<p>But be sure to use search with the <code>[r]</code> or <code>[rstats]</code> tags to find R specific information.</p>
-
-</article></slide><slide class=""><hgroup><h2>R Related news</h2></hgroup><article  id="r-related-news">
-
-<ul>
-<li>search <img src='images/twitter.svg' title=''/> with the hashtag <a href='https://twitter.com/search?q=%23rstats' title=''><code>#rstats</code></a></li>
-<li><a href='https://journal.r-project.org/' title=''>The R Journal</a></li>
-<li><a href='https://www.r-bloggers.com/' title=''><img src='images/R-bloggers.png' title=''/></a></li>
-</ul></article></slide>
+<ol>
+<li>Choose our variable of interest and discard the rest, then pivot or <code>spread</code> the column.</li>
+<li>Subset to each value of <code>Case Def.</code> Then merge those together.</li>
+<li>Spread each column and then &lsquo;bind&rsquo; the results together.</li>
+</ol></article></slide>
 
 
   <slide class="backdrop"></slide>
