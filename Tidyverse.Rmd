@@ -36,10 +36,6 @@ output:
 * The Tidyverse is [R for Data Science](https://r4ds.had.co.nz/)
     + The [book](https://r4ds.had.co.nz/) is well worth your time to read.
 
-## Tidyverse - The Tidy Manifesto
-
-
-
 ## Tidyverse - Packages
 
 * Cohesive set of packages to handle common aspects of data analysis.

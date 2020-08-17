@@ -26,6 +26,7 @@ This webpage will be your guide to this course. Please Start by reading the
 * Ebola Data
     + [Source](https://data.humdata.org/dataset/ebola-cases-2014) - The Humanitarian Data Exchange       
     + [Data](https://github.com/halpo/R_Bootcamp_2020/raw/master/data/ebola-cases-and-deaths-who-gar-sitrep.xlsx)
+    + [Script - version 1](https://github.com/halpo/R_Bootcamp_2020/tree/master/reading_ebola_data.R)
 * Bourdeaux Wine Data
     + [Source](https://link.springer.com/book/10.1007/978-0-387-09608-7) - 
         Sheather, Simon. *A modern approach to regression with R.* Springer Science & Business Media, 2009.

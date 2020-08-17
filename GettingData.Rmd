@@ -83,6 +83,25 @@ ebola.data.raw <- readxl::read_excel("data/ebola-cases-and-deaths-who-gar-sitrep
 head(ebola.data.raw)
 ```
 
+## Examining data
+
+Useful tools for examining data.
+
+* `str()` - 'structure' of the data.
+* `glimpse()` - more useful version of str and works on all tibbles.
+* `head()` - first n rows.
+* `tail()` - last n rows
+* `summary()` - will give univariate summaries of variables.
+
+## `glimpse()`
+
+```{r}
+glimpse(ebola.data.raw)
+```
+
+
+
+
 ## Problem {.flexbox .vcenter .build}
 
 This is only one sheet 🙁

@@ -161,6 +161,7 @@ The `:::` operator breaks encapsulation and retrieves the internal objects of a 
 # Finding Packages
 
 ![](images/PackageSources.png)
+
 ## Repositories
 
 Repositories are locations where you (and R) can find packages to install and use.

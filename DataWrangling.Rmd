@@ -1,0 +1,120 @@
+---
+title: "Data Wrangling"
+author: "Andrew Redd, PhD."
+date: "R Bootcamp 2020"
+output: 
+    ioslides_presentation:
+        logo: "images/U_Health_stacked_png_red.png"
+        theme: "paper"
+        css: "style.css"
+        keep_md: FALSE
+        md_extensions: 
+            - "+task_lists"
+            - "+multiline_tables"
+        includes:
+            in_header: timer.htm
+        standalone: TRUE
+        widescreen: TRUE
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+library(printr)
+library(tidyverse)
+library(magrittr)
+knitr::opts_chunk$set(echo = TRUE, error=TRUE
+                     , class.error='error'
+                     , class.warning='warning'
+                     , class.message='message'
+                     , cache=FALSE)
+options( repos="https://cran.rstudio.org"
+       , width=60
+       )
+```
+
+# 
+
+![](images/data_wrangler.png)
+
+## Manipulations
+
+* Data integrity
+* Reshaping
+* Filtering
+* Merging
+* Summarizing
+
+## Packages that we will use
+```{r results='hold', message=FALSE}
+# Make tidyverse load quietly
+options(tidyverse.quiet = TRUE)
+library(tidyverse)   #< General use
+library(tidyr)       #< Reshaping
+library(wbstats)     #< World bank data.
+library(countrycode) #< Country coding
+library(assertthat)  #< Results checking
+library(lubridate)   #< Date manipulations
+requireNamespace(zoo)#< time series
+```
+
+## Loading data
+
+for `.RData` files use `load()`
+```{r}
+load("data/ebola.data.RData")
+```
+
+for `.rds` files use `readRDS()` and capture the results in a variable.
+```{r}
+ebola <- readRDS("data/ebola.data.rds")
+```
+
+## Always check your data{.build}
+
+Any problems with the data?
+
+![](images/shock.gif)
+
+##  Ebola Data Problem{.build}
+
+The Most obvious is that `Country Report Date` should be repeated down the rows.
+
+Fix with `dplyr::mutate()` + `zoo::na.locf()` (Missing last observation carried forward.)
+
+```{r}
+ebola.data %<>% 
+    mutate_at('Country Report Date', zoo::na.locf)
+```
+
+### Notes:
+1. We used the assign-back pipe `%<>%` to modify in place. *Generally this is frowned upon*
+2. Note the double colon for using na.locf from zoo without attaching the package.
+
+
+## Reformatting data
+
+* Wide Data
+    - multiple observations for one unit are in columns
+* Long Data
+    - multiple observations for one unit are in rows.
+
+## Task make 'Case def.' separate columns{.build}
+
+We would like to make `Case def.` separate columns there are however 
+3 possible response variables:
+
+1. Total cases
+2. Cases last 21.days
+3. Total Deaths
+
+Options?
+
+1. Choose our variable of interest and discard the rest, then pivot or `spread` the column.
+2. Subset to each value of `Case Def.` Then merge those together.
+3. Spread each column and then 'bind' the results together.
+
+
+
+
+
+
