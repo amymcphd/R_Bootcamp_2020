@@ -211,9 +211,7 @@ library(wbstats)     #&lt; World bank data.
 library(countrycode) #&lt; Country coding
 library(assertthat)  #&lt; Results checking
 library(lubridate)   #&lt; Date manipulations
-requireNamespace(zoo)#&lt; time series</pre>
-
-<pre class = 'prettyprint lang-error'>## Error in requireNamespace(zoo): object &#39;zoo&#39; not found</pre>
+requireNamespace(&#39;zoo&#39;)#&lt; time series</pre>
 
 </article></slide><slide class=""><hgroup><h2>Loading data</h2></hgroup><article  id="loading-data">
 
@@ -225,17 +223,28 @@ requireNamespace(zoo)#&lt; time series</pre>
 
 <pre class = 'prettyprint lang-r'>ebola &lt;- readRDS(&quot;data/ebola.data.rds&quot;)</pre>
 
-</article></slide><slide class=""><hgroup><h2>Always check your data</h2></hgroup><article  class="build" id="always-check-your-data">
+</article></slide><slide class=""><hgroup><h2>Always check your data</h2></hgroup><article  id="always-check-your-data" class="build">
 
 <p>Any problems with the data?</p>
 
 <img src='images/shock.gif' title=''/>
 
-</article></slide><slide class=""><hgroup><h2>Ebola Data Problem</h2></hgroup><article  class="build" id="ebola-data-problem">
+</article></slide><slide class=""><hgroup><h2>Ebola Data Problem</h2></hgroup><article  id="ebola-data-problem" class="build">
 
 <p>The Most obvious is that <code>Country Report Date</code> should be repeated down the rows.</p>
 
 <p>Fix with <code>dplyr::mutate()</code> + <code>zoo::na.locf()</code> (Missing last observation carried forward.)</p>
+
+</article></slide><slide class=""><hgroup><h2><code>mutate()</code> variants</h2></hgroup><article  id="mutate-variants">
+
+<ul>
+<li><code>mutate()</code> - modify/add variables</li>
+<li><code>mutate_at()</code> - modify a set of variables.</li>
+<li><code>mutate_if()</code> - modify variables meeting a criteria</li>
+<li><code>transmute()</code> - create a new set of variables based on previous.</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Ebola Data Problem</h2></hgroup><article  id="ebola-data-problem-1" class="build">
 
 <pre class = 'prettyprint lang-r'>ebola.data %&lt;&gt;% 
     mutate_at(&#39;Country Report Date&#39;, zoo::na.locf)</pre>
@@ -246,6 +255,1808 @@ requireNamespace(zoo)#&lt; time series</pre>
 <li>We used the assign-back pipe <code>%&lt;&gt;%</code> to modify in place. <em>Generally this is frowned upon</em></li>
 <li>Note the double colon for using na.locf from zoo without attaching the package.</li>
 </ol>
+
+</article></slide><slide class=""><hgroup><h2><code>select()</code> - Choosing variables</h2></hgroup><article  id="select---choosing-variables">
+
+<div class="keyfunction">
+<p>Use <code>select()</code> to choose the variables desired.</p></div>
+
+<h3>Basic Usage</h3>
+
+<pre class = 'prettyprint lang-r'>select(data, ...)</pre>
+
+<p>Over the next few examples we will explore the forms <code>...</code> can take</p>
+
+</article></slide><slide class=""><hgroup><h2><code>select()</code> - Variable Names</h2></hgroup><article  id="select---variable-names">
+
+<p>the easiest is with variable names:</p>
+
+<pre class = 'prettyprint lang-r'>ebola.data %&gt;% select(Country, `Case def.`, `Total cases`) %&gt;% head()</pre>
+
+<table class = 'rmdtable'>
+<tr class="header">
+<th align="left">Country</th>
+<th align="left">Case def.</th>
+<th align="right">Total cases</th>
+</tr>
+<tr class="odd">
+<td align="left">Guinea</td>
+<td align="left">Confirmed</td>
+<td align="right">3351</td>
+</tr>
+<tr class="even">
+<td align="left">Guinea</td>
+<td align="left">Probable</td>
+<td align="right">453</td>
+</tr>
+<tr class="odd">
+<td align="left">Guinea</td>
+<td align="left">Suspected</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">Guinea</td>
+<td align="left">All</td>
+<td align="right">3804</td>
+</tr>
+<tr class="odd">
+<td align="left">Liberia</td>
+<td align="left">Confirmed</td>
+<td align="right">3151</td>
+</tr>
+<tr class="even">
+<td align="left">Liberia</td>
+<td align="left">Probable</td>
+<td align="right">1879</td>
+</tr>
+</table>
+
+</article></slide><slide class=""><hgroup><h2><code>select()</code> - Dropping by Variable Names</h2></hgroup><article  id="select---dropping-by-variable-names">
+
+<p>You can select everything <strong>but</strong> a variable with the minus operator</p>
+
+<pre class = 'prettyprint lang-r'>ebola.data %&gt;% select(-`Total cases`) %&gt;% head()</pre>
+
+<table class = 'rmdtable'>
+<tr class="header">
+<th align="left">SheetName</th>
+<th align="left">Country</th>
+<th align="left">Case def.</th>
+<th align="right">Total deaths</th>
+<th align="left">Country Report Date</th>
+</tr>
+<tr class="odd">
+<td align="left">Jan 06, 2016</td>
+<td align="left">Guinea</td>
+<td align="left">Confirmed</td>
+<td align="right">2083</td>
+<td align="left">2015-12-27</td>
+</tr>
+<tr class="even">
+<td align="left">Jan 06, 2016</td>
+<td align="left">Guinea</td>
+<td align="left">Probable</td>
+<td align="right">453</td>
+<td align="left">2015-12-27</td>
+</tr>
+<tr class="odd">
+<td align="left">Jan 06, 2016</td>
+<td align="left">Guinea</td>
+<td align="left">Suspected</td>
+<td align="right">0</td>
+<td align="left">2015-12-27</td>
+</tr>
+<tr class="even">
+<td align="left">Jan 06, 2016</td>
+<td align="left">Guinea</td>
+<td align="left">All</td>
+<td align="right">2536</td>
+<td align="left">2015-12-27</td>
+</tr>
+<tr class="odd">
+<td align="left">Jan 06, 2016</td>
+<td align="left">Liberia</td>
+<td align="left">Confirmed</td>
+<td align="right">0</td>
+<td align="left">2015-05-09</td>
+</tr>
+<tr class="even">
+<td align="left">Jan 06, 2016</td>
+<td align="left">Liberia</td>
+<td align="left">Probable</td>
+<td align="right">0</td>
+<td align="left">2015-05-09</td>
+</tr>
+</table>
+
+</article></slide><slide class=""><hgroup><h2><code>select()</code> - By the numbers</h2></hgroup><article  id="select---by-the-numbers">
+
+<p>You can select by variable position as well.</p>
+
+<pre class = 'prettyprint lang-r'>ebola.data %&gt;% select(1:4) %&gt;% head()</pre>
+
+<table class = 'rmdtable'>
+<tr class="header">
+<th align="left">SheetName</th>
+<th align="left">Country</th>
+<th align="left">Case def.</th>
+<th align="right">Total cases</th>
+</tr>
+<tr class="odd">
+<td align="left">Jan 06, 2016</td>
+<td align="left">Guinea</td>
+<td align="left">Confirmed</td>
+<td align="right">3351</td>
+</tr>
+<tr class="even">
+<td align="left">Jan 06, 2016</td>
+<td align="left">Guinea</td>
+<td align="left">Probable</td>
+<td align="right">453</td>
+</tr>
+<tr class="odd">
+<td align="left">Jan 06, 2016</td>
+<td align="left">Guinea</td>
+<td align="left">Suspected</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">Jan 06, 2016</td>
+<td align="left">Guinea</td>
+<td align="left">All</td>
+<td align="right">3804</td>
+</tr>
+<tr class="odd">
+<td align="left">Jan 06, 2016</td>
+<td align="left">Liberia</td>
+<td align="left">Confirmed</td>
+<td align="right">3151</td>
+</tr>
+<tr class="even">
+<td align="left">Jan 06, 2016</td>
+<td align="left">Liberia</td>
+<td align="left">Probable</td>
+<td align="right">1879</td>
+</tr>
+</table>
+
+</article></slide><slide class=""><hgroup><h2><code>select()</code> - by variable range</h2></hgroup><article  id="select---by-variable-range">
+
+<p>Use single colon <code>:</code> with variable names to select variables named and eveything in between:</p>
+
+<pre class = 'prettyprint lang-r'>ebola.data %&gt;% select(Country:`Total cases`) %&gt;% head()</pre>
+
+<table class = 'rmdtable'>
+<tr class="header">
+<th align="left">Country</th>
+<th align="left">Case def.</th>
+<th align="right">Total cases</th>
+</tr>
+<tr class="odd">
+<td align="left">Guinea</td>
+<td align="left">Confirmed</td>
+<td align="right">3351</td>
+</tr>
+<tr class="even">
+<td align="left">Guinea</td>
+<td align="left">Probable</td>
+<td align="right">453</td>
+</tr>
+<tr class="odd">
+<td align="left">Guinea</td>
+<td align="left">Suspected</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">Guinea</td>
+<td align="left">All</td>
+<td align="right">3804</td>
+</tr>
+<tr class="odd">
+<td align="left">Liberia</td>
+<td align="left">Confirmed</td>
+<td align="right">3151</td>
+</tr>
+<tr class="even">
+<td align="left">Liberia</td>
+<td align="left">Probable</td>
+<td align="right">1879</td>
+</tr>
+</table>
+
+</article></slide><slide class=""><hgroup><h2><code>select()</code> - by helpers</h2></hgroup><article  id="select---by-helpers">
+
+<p>selection helpers are also provided:</p>
+
+<pre class = 'prettyprint lang-r'>ebola.data %&gt;% select(starts_with(&quot;Total&quot;)) %&gt;% head()</pre>
+
+<table class = 'rmdtable'>
+<tr class="header">
+<th align="right">Total cases</th>
+<th align="right">Total deaths</th>
+</tr>
+<tr class="odd">
+<td align="right">3351</td>
+<td align="right">2083</td>
+</tr>
+<tr class="even">
+<td align="right">453</td>
+<td align="right">453</td>
+</tr>
+<tr class="odd">
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">3804</td>
+<td align="right">2536</td>
+</tr>
+<tr class="odd">
+<td align="right">3151</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">1879</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">## <code>select()</code></td>
+<td align="right">- The helpers</td>
+</tr>
+</table>
+
+<p>The available helpers are:</p>
+
+<ul>
+<li><code>starts_with()</code></li>
+<li><code>ends_with()</code></li>
+<li><code>contains()</code> - must match literally</li>
+<li><code>matches()</code> - Regular expression match</li>
+<li><code>num_range()</code> - numerical ranged variables with a prefix</li>
+<li><code>all_of()</code> - must match all of given variables named in a vector.</li>
+<li><code>any_of()</code> - select any variables present in given vector, but no error if not present.</li>
+<li><code>everything()</code> - Matches all variables, useful when reordering variables.</li>
+<li><code>last_col()</code> - The last column</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2><code>select()</code> - Multiple</h2></hgroup><article  id="select---multiple">
+
+<p>You may use multiple forms together</p>
+
+<pre class = 'prettyprint lang-r'>ebola.data %&gt;% select(last_col(), 2:3, `Total cases`) %&gt;% head()</pre>
+
+<table class = 'rmdtable'>
+<tr class="header">
+<th align="left">Country Report Date</th>
+<th align="left">Country</th>
+<th align="left">Case def.</th>
+<th align="right">Total cases</th>
+</tr>
+<tr class="odd">
+<td align="left">2015-12-27</td>
+<td align="left">Guinea</td>
+<td align="left">Confirmed</td>
+<td align="right">3351</td>
+</tr>
+<tr class="even">
+<td align="left">2015-12-27</td>
+<td align="left">Guinea</td>
+<td align="left">Probable</td>
+<td align="right">453</td>
+</tr>
+<tr class="odd">
+<td align="left">2015-12-27</td>
+<td align="left">Guinea</td>
+<td align="left">Suspected</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">2015-12-27</td>
+<td align="left">Guinea</td>
+<td align="left">All</td>
+<td align="right">3804</td>
+</tr>
+<tr class="odd">
+<td align="left">2015-05-09</td>
+<td align="left">Liberia</td>
+<td align="left">Confirmed</td>
+<td align="right">3151</td>
+</tr>
+<tr class="even">
+<td align="left">2015-05-09</td>
+<td align="left">Liberia</td>
+<td align="left">Probable</td>
+<td align="right">1879</td>
+</tr>
+</table>
+
+</article></slide><slide class=""><hgroup><h2>Subsetting data</h2></hgroup><article  id="subsetting-data" class="build">
+
+<div class="keyfunction">
+<p>Subset data with the <code>filter()</code> function.</p></div>
+
+<p>The base R version is subset, but it is FAR less robust.</p>
+
+<p>It takes the form of</p>
+
+<pre class = 'prettyprint lang-r'>filter(data, expr1, expr2, ...)</pre>
+
+<p>where <code>data</code> is the data set, and <code>expr1</code>, <code>expr2</code>, … are the criteria expressions evaluated <em>in the context of the data</em>. Data must meet <em>all</em> ctriteria to remain.</p>
+
+</article></slide><slide class=""><hgroup><h2><code>filter()</code> Example</h2></hgroup><article  id="filter-example">
+
+<p>Subset data to only confirmed cases for Nigeria.</p>
+
+<pre class = 'prettyprint lang-r'>filter( ebola.data
+      , Country == &#39;Nigeria&#39;
+      , `Case def.` == &#39;Confirmed&#39;
+      )</pre>
+
+<table class = 'rmdtable'>
+<tr class="header">
+<th align="left">SheetName</th>
+<th align="left">Country</th>
+<th align="left">Case def.</th>
+<th align="right">Total cases</th>
+<th align="right">Total deaths</th>
+<th align="left">Country Report Date</th>
+</tr>
+<tr class="odd">
+<td align="left">Jan 06, 2016</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="even">
+<td align="left">Dec 30, 2015</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="odd">
+<td align="left">Dec 23, 2015</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="even">
+<td align="left">Dec 16</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="odd">
+<td align="left">Dec 9</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="even">
+<td align="left">Dec 2</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="odd">
+<td align="left">Nov 25</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="even">
+<td align="left">Nov 18</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="odd">
+<td align="left">Nov 11</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="even">
+<td align="left">Nov 4</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="odd">
+<td align="left">Oct 28</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="even">
+<td align="left">Oct 21</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="odd">
+<td align="left">Oct 14</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="even">
+<td align="left">Oct 7</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="odd">
+<td align="left">Sep 30</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="even">
+<td align="left">Sep 23</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="odd">
+<td align="left">Sep 16</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="even">
+<td align="left">Sep 9</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="odd">
+<td align="left">Sep 2</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="even">
+<td align="left">Aug 26</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="odd">
+<td align="left">Aug 19</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="even">
+<td align="left">Aug 12</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="odd">
+<td align="left">Aug 5</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="even">
+<td align="left">July 29</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="odd">
+<td align="left">July 22</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="even">
+<td align="left">July 15</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="odd">
+<td align="left">July 8</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="even">
+<td align="left">July 1</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="odd">
+<td align="left">June 24</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="even">
+<td align="left">June 17</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="odd">
+<td align="left">June 10</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="even">
+<td align="left">June 3</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="odd">
+<td align="left">May 27</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="even">
+<td align="left">May 20</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="odd">
+<td align="left">May 13</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="even">
+<td align="left">May 06</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="odd">
+<td align="left">Apr 29</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="even">
+<td align="left">Apr 22</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="odd">
+<td align="left">Apr 15</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="even">
+<td align="left">Apr 08</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="odd">
+<td align="left">Apr 01</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="even">
+<td align="left">Mar 25</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="odd">
+<td align="left">Mar 18</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="even">
+<td align="left">Mar 11</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="odd">
+<td align="left">Mar 4</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="even">
+<td align="left">Feb 25</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="odd">
+<td align="left">Feb 18</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="even">
+<td align="left">Feb 11</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="odd">
+<td align="left">Feb 04</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="even">
+<td align="left">Jan 28</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="odd">
+<td align="left">Jan 21</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="even">
+<td align="left">Jan 14</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="odd">
+<td align="left">Jan 07</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="even">
+<td align="left">Jan 06</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="odd">
+<td align="left">Jan 05</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="even">
+<td align="left">Jan 02</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="odd">
+<td align="left">Dec 31</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="even">
+<td align="left">Dec 30</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="odd">
+<td align="left">Dec 29</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="even">
+<td align="left">Dec 26</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="odd">
+<td align="left">Dec 24</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="even">
+<td align="left">Dec 23</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="odd">
+<td align="left">Dec 22</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="even">
+<td align="left">Dec 19</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="odd">
+<td align="left">Dec 17</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="even">
+<td align="left">Dec 15</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="odd">
+<td align="left">Dec 10</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="even">
+<td align="left">Dec 03</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="odd">
+<td align="left">Dec 01</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="even">
+<td align="left">Nov 26</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="odd">
+<td align="left">Nov 21</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="even">
+<td align="left">Nov 19</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="odd">
+<td align="left">Nov 14</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="even">
+<td align="left">Nov 12</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="odd">
+<td align="left">Nov 7</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="even">
+<td align="left">Nov 5</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="odd">
+<td align="left">Oct 31</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="even">
+<td align="left">Oct 29</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="odd">
+<td align="left">Oct 25</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="even">
+<td align="left">Oct 22</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-19</td>
+</tr>
+<tr class="odd">
+<td align="left">Oct 17</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-14</td>
+</tr>
+<tr class="even">
+<td align="left">Oct 15</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-12</td>
+</tr>
+<tr class="odd">
+<td align="left">Oct 10</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-08</td>
+</tr>
+<tr class="even">
+<td align="left">Oct 8</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-05</td>
+</tr>
+<tr class="odd">
+<td align="left">Oct 3</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-10-01</td>
+</tr>
+<tr class="even">
+<td align="left">Oct 1</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-09-28</td>
+</tr>
+<tr class="odd">
+<td align="left">Sep 26</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-09-23</td>
+</tr>
+<tr class="even">
+<td align="left">Sep 24</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-09-21</td>
+</tr>
+<tr class="odd">
+<td align="left">Sep 22</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-09-19</td>
+</tr>
+<tr class="even">
+<td align="left">Sep 18</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-09-14</td>
+</tr>
+<tr class="odd">
+<td align="left">Sep 16 2014</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-09-13</td>
+</tr>
+<tr class="even">
+<td align="left">Sep 12 2014</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-09-07</td>
+</tr>
+<tr class="odd">
+<td align="left">Sep 8 2014</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">19</td>
+<td align="right">7</td>
+<td align="left">2014-09-06</td>
+</tr>
+<tr class="even">
+<td align="left">Sep 5 2014</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">18</td>
+<td align="right">7</td>
+<td align="left">2014-09-05</td>
+</tr>
+<tr class="odd">
+<td align="left">Aug 29 2014</td>
+<td align="left">Nigeria</td>
+<td align="left">Confirmed</td>
+<td align="right">15</td>
+<td align="right">6</td>
+<td align="left">2014-08-25</td>
+</tr>
+</table>
+
+</article></slide><slide class=""><hgroup><h2><code>filter()</code> Example 2</h2></hgroup><article  id="filter-example-2">
+
+<p>to perform an or use the single <code>|</code></p>
+
+<pre class = 'prettyprint lang-r'>filter( ebola.data
+      , (Country == &#39;Nigeria&#39;) | (Country == &#39;Sierra Leone&#39;)
+      , `Case def.` == &#39;Confirmed&#39;
+      )</pre>
+
+<p>an alternate form would be to use <code>%in%</code></p>
+
+<pre class = 'prettyprint lang-r'>filter( ebola.data
+      , Country %in% c(&#39;Nigeria&#39;, &#39;Sierra Leone&#39;)
+      , `Case def.` == &#39;Confirmed&#39;
+      )</pre>
+
+</article></slide><slide class=""><hgroup><h2><code>distinct()</code> - normalizing</h2></hgroup><article  id="distinct---normalizing" class="build">
+
+<p>From the previous filter example note that report date is repeated week after week.<br/>:::{.keyfunction} To get only distinct observations, use <code>distinct()</code>. :::</p>
+
+</article></slide><slide class=""><hgroup><h2><code>distinct()</code> - normalizing</h2></hgroup><article  id="distinct---normalizing-1" class="build">
+
+<pre class = 'prettyprint lang-r'>`Confirmed Cases for Sierra Leone` &lt;- 
+filter( ebola.data
+      , Country == &#39;Sierra Leone&#39;
+      , `Case def.` == &#39;Confirmed&#39;
+      ) %&gt;% 
+    select(last_col(), Country, `Case def.`, starts_with(&#39;Total&#39;)) %&gt;% 
+    distinct()</pre>
+
+<table class = 'rmdtable'>
+<tr class="header">
+<th align="left">Country Report Date</th>
+<th align="left">Country</th>
+<th align="left">Case def.</th>
+<th align="right">Total cases</th>
+<th align="right">Total deaths</th>
+</tr>
+<tr class="odd">
+<td align="left">2015-11-08</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">8704</td>
+<td align="right">3589</td>
+</tr>
+<tr class="even">
+<td align="left">2015-11-01</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">8704</td>
+<td align="right">3589</td>
+</tr>
+<tr class="odd">
+<td align="left">2015-10-25</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">8704</td>
+<td align="right">3589</td>
+</tr>
+<tr class="even">
+<td align="left">2015-10-18</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">8704</td>
+<td align="right">3589</td>
+</tr>
+<tr class="odd">
+<td align="left">2015-10-11</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">8704</td>
+<td align="right">3589</td>
+</tr>
+<tr class="even">
+<td align="left">2015-10-04</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">8704</td>
+<td align="right">3589</td>
+</tr>
+<tr class="odd">
+<td align="left">2015-09-27</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">8704</td>
+<td align="right">3589</td>
+</tr>
+<tr class="even">
+<td align="left">2015-09-20</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">8704</td>
+<td align="right">3589</td>
+</tr>
+<tr class="odd">
+<td align="left">2015-09-13</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">8704</td>
+<td align="right">3587</td>
+</tr>
+<tr class="even">
+<td align="left">2015-09-06</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">8699</td>
+<td align="right">3587</td>
+</tr>
+<tr class="odd">
+<td align="left">2015-08-30</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">8698</td>
+<td align="right">3587</td>
+</tr>
+<tr class="even">
+<td align="left">2015-08-23</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">8697</td>
+<td align="right">3586</td>
+</tr>
+<tr class="odd">
+<td align="left">2015-08-16</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">8697</td>
+<td align="right">3586</td>
+</tr>
+<tr class="even">
+<td align="left">2015-08-09</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">8697</td>
+<td align="right">3585</td>
+</tr>
+<tr class="odd">
+<td align="left">2015-08-02</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">8695</td>
+<td align="right">3585</td>
+</tr>
+<tr class="even">
+<td align="left">2015-07-26</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">8694</td>
+<td align="right">3585</td>
+</tr>
+<tr class="odd">
+<td align="left">2015-07-19</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">8692</td>
+<td align="right">3583</td>
+</tr>
+<tr class="even">
+<td align="left">2015-07-12</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">8688</td>
+<td align="right">3581</td>
+</tr>
+<tr class="odd">
+<td align="left">2015-07-05</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">8674</td>
+<td align="right">3574</td>
+</tr>
+<tr class="even">
+<td align="left">2015-06-28</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">8665</td>
+<td align="right">3566</td>
+</tr>
+<tr class="odd">
+<td align="left">2015-06-21</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">8657</td>
+<td align="right">3562</td>
+</tr>
+<tr class="even">
+<td align="left">2015-06-14</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">8649</td>
+<td align="right">3553</td>
+</tr>
+<tr class="odd">
+<td align="left">2015-06-07</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">8635</td>
+<td align="right">3549</td>
+</tr>
+<tr class="even">
+<td align="left">2015-05-31</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">8620</td>
+<td align="right">3546</td>
+</tr>
+<tr class="odd">
+<td align="left">2015-05-24</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">8608</td>
+<td align="right">3542</td>
+</tr>
+<tr class="even">
+<td align="left">2015-05-17</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">8605</td>
+<td align="right">3541</td>
+</tr>
+<tr class="odd">
+<td align="left">2015-05-10</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">8597</td>
+<td align="right">3538</td>
+</tr>
+<tr class="even">
+<td align="left">2015-05-03</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">8595</td>
+<td align="right">3537</td>
+</tr>
+<tr class="odd">
+<td align="left">2015-04-26</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">8586</td>
+<td align="right">3533</td>
+</tr>
+<tr class="even">
+<td align="left">2015-04-19</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">8575</td>
+<td align="right">3511</td>
+</tr>
+<tr class="odd">
+<td align="left">2015-04-12</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">8563</td>
+<td align="right">3491</td>
+</tr>
+<tr class="even">
+<td align="left">2015-04-05</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">8554</td>
+<td align="right">3465</td>
+</tr>
+<tr class="odd">
+<td align="left">2015-03-29</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">8545</td>
+<td align="right">3433</td>
+</tr>
+<tr class="even">
+<td align="left">2015-03-22</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">8520</td>
+<td align="right">3381</td>
+</tr>
+<tr class="odd">
+<td align="left">2015-03-15</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">8487</td>
+<td align="right">3325</td>
+</tr>
+<tr class="even">
+<td align="left">2015-03-08</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">8428</td>
+<td align="right">3263</td>
+</tr>
+<tr class="odd">
+<td align="left">2015-03-01</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">8370</td>
+<td align="right">3180</td>
+</tr>
+<tr class="even">
+<td align="left">2015-02-22</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">8289</td>
+<td align="right">3095</td>
+</tr>
+<tr class="odd">
+<td align="left">2015-02-15</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">8212</td>
+<td align="right">3042</td>
+</tr>
+<tr class="even">
+<td align="left">2015-02-08</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">8135</td>
+<td align="right">2975</td>
+</tr>
+<tr class="odd">
+<td align="left">2015-02-01</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">8059</td>
+<td align="right">2910</td>
+</tr>
+<tr class="even">
+<td align="left">2015-01-25</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">7968</td>
+<td align="right">2833</td>
+</tr>
+<tr class="odd">
+<td align="left">2015-01-18</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">7903</td>
+<td align="right">2779</td>
+</tr>
+<tr class="even">
+<td align="left">2015-01-11</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">7786</td>
+<td align="right">2696</td>
+</tr>
+<tr class="odd">
+<td align="left">2015-01-04</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">7602</td>
+<td align="right">2577</td>
+</tr>
+<tr class="even">
+<td align="left">2015-01-03</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">7570</td>
+<td align="right">2549</td>
+</tr>
+<tr class="odd">
+<td align="left">2014-12-31</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">7476</td>
+<td align="right">2461</td>
+</tr>
+<tr class="even">
+<td align="left">2014-12-28</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">7354</td>
+<td align="right">2392</td>
+</tr>
+<tr class="odd">
+<td align="left">2014-12-27</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">7326</td>
+<td align="right">2366</td>
+</tr>
+<tr class="even">
+<td align="left">2014-12-24</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">7160</td>
+<td align="right">2289</td>
+</tr>
+<tr class="odd">
+<td align="left">2014-12-21</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">7017</td>
+<td align="right">2216</td>
+</tr>
+<tr class="even">
+<td align="left">2014-12-20</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">6975</td>
+<td align="right">2190</td>
+</tr>
+<tr class="odd">
+<td align="left">2014-12-17</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">6856</td>
+<td align="right">2111</td>
+</tr>
+<tr class="even">
+<td align="left">2014-12-14</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">6702</td>
+<td align="right">1876</td>
+</tr>
+<tr class="odd">
+<td align="left">2014-12-13</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">6638</td>
+<td align="right">1824</td>
+</tr>
+<tr class="even">
+<td align="left">2014-12-07</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">6375</td>
+<td align="right">1559</td>
+</tr>
+<tr class="odd">
+<td align="left">2014-11-30</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">5978</td>
+<td align="right">1374</td>
+</tr>
+<tr class="even">
+<td align="left">2014-11-28</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">5831</td>
+<td align="right">1321</td>
+</tr>
+<tr class="odd">
+<td align="left">2014-11-23</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">5441</td>
+<td align="right">1189</td>
+</tr>
+<tr class="even">
+<td align="left">2014-11-18</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">5152</td>
+<td align="right">1058</td>
+</tr>
+<tr class="odd">
+<td align="left">2014-11-16</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">5056</td>
+<td align="right">1041</td>
+</tr>
+<tr class="even">
+<td align="left">2014-11-11</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">4683</td>
+<td align="right">978</td>
+</tr>
+<tr class="odd">
+<td align="left">2014-11-09</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">4523</td>
+<td align="right">960</td>
+</tr>
+<tr class="even">
+<td align="left">2014-11-04</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">4149</td>
+<td align="right">921</td>
+</tr>
+<tr class="odd">
+<td align="left">2014-11-02</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">4057</td>
+<td align="right">893</td>
+</tr>
+<tr class="even">
+<td align="left">2014-10-29</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">3778</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">2014-10-27</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">3700</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">2014-10-22</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">3389</td>
+<td align="right">1008</td>
+</tr>
+<tr class="odd">
+<td align="left">2014-10-19</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">3223</td>
+<td align="right">986</td>
+</tr>
+<tr class="even">
+<td align="left">2014-10-14</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">2977</td>
+<td align="right">932</td>
+</tr>
+<tr class="odd">
+<td align="left">2014-10-12</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">2849</td>
+<td align="right">926</td>
+</tr>
+<tr class="even">
+<td align="left">2014-10-08</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">2593</td>
+<td align="right">753</td>
+</tr>
+<tr class="odd">
+<td align="left">2014-10-05</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">2455</td>
+<td align="right">725</td>
+</tr>
+<tr class="even">
+<td align="left">2014-10-01</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">2179</td>
+<td align="right">575</td>
+</tr>
+<tr class="odd">
+<td align="left">2014-09-28</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">2076</td>
+<td align="right">574</td>
+</tr>
+<tr class="even">
+<td align="left">2014-09-23</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">1816</td>
+<td align="right">557</td>
+</tr>
+<tr class="odd">
+<td align="left">2014-09-21</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">1745</td>
+<td align="right">552</td>
+</tr>
+<tr class="even">
+<td align="left">2014-09-19</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">1640</td>
+<td align="right">545</td>
+</tr>
+<tr class="odd">
+<td align="left">2014-09-14</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">1513</td>
+<td align="right">517</td>
+</tr>
+<tr class="even">
+<td align="left">2014-09-13</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">1464</td>
+<td align="right">514</td>
+</tr>
+<tr class="odd">
+<td align="left">2014-09-07</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">1287</td>
+<td align="right">478</td>
+</tr>
+<tr class="even">
+<td align="left">2014-09-06</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">1234</td>
+<td align="right">461</td>
+</tr>
+<tr class="odd">
+<td align="left">2014-09-05</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">1146</td>
+<td align="right">443</td>
+</tr>
+<tr class="even">
+<td align="left">2014-08-25</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">935</td>
+<td align="right">380</td>
+</tr>
+</table>
+
+</article></slide><slide class=""><hgroup><h2>Sorting Data</h2></hgroup><article  id="sorting-data">
+
+<div class="keyfunction">
+<p>To sort data use <code>arrange()</code></p></div>
+
+<p><code>sort()</code> is the base version but again, less robust.</p>
+
+<p>Arrange allows you to give sorting criteria.</p>
+
+</article></slide><slide class=""><hgroup><h2><code>arrange()</code> Example</h2></hgroup><article  id="arrange-example">
+
+<pre class = 'prettyprint lang-r'>`Confirmed Cases for Sierra Leone` %&gt;% 
+    arrange(`Country Report Date`, desc(`Case def.`)) %&gt;% 
+    head()</pre>
+
+<table class = 'rmdtable'>
+<tr class="header">
+<th align="left">Country Report Date</th>
+<th align="left">Country</th>
+<th align="left">Case def.</th>
+<th align="right">Total cases</th>
+<th align="right">Total deaths</th>
+</tr>
+<tr class="odd">
+<td align="left">2014-08-25</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">935</td>
+<td align="right">380</td>
+</tr>
+<tr class="even">
+<td align="left">2014-09-05</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">1146</td>
+<td align="right">443</td>
+</tr>
+<tr class="odd">
+<td align="left">2014-09-06</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">1234</td>
+<td align="right">461</td>
+</tr>
+<tr class="even">
+<td align="left">2014-09-07</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">1287</td>
+<td align="right">478</td>
+</tr>
+<tr class="odd">
+<td align="left">2014-09-13</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">1464</td>
+<td align="right">514</td>
+</tr>
+<tr class="even">
+<td align="left">2014-09-14</td>
+<td align="left">Sierra Leone</td>
+<td align="left">Confirmed</td>
+<td align="right">1513</td>
+<td align="right">517</td>
+</tr>
+</table>
 
 </article></slide><slide class=""><hgroup><h2>Reformatting data</h2></hgroup><article  id="reformatting-data">
 
@@ -262,23 +2073,386 @@ requireNamespace(zoo)#&lt; time series</pre>
 </ul></li>
 </ul>
 
-</article></slide><slide class=""><hgroup><h2>Task make &lsquo;Case def.&rsquo; separate columns</h2></hgroup><article  class="build" id="task-make-case-def.-separate-columns">
+</article></slide><slide class=""><hgroup><h2>Task: make &lsquo;Case def.&rsquo; separate columns</h2></hgroup><article  id="task-make-case-def.-separate-columns" class="build">
 
-<p>We would like to make <code>Case def.</code> separate columns there are however 3 possible response variables:</p>
+<p>We would like to make <code>Case def.</code> separate columns there are however 2 possible response variables:</p>
 
 <ol>
-<li>Total cases</li>
-<li>Cases last 21.days</li>
+<li>Total Cases</li>
 <li>Total Deaths</li>
 </ol>
 
 <p>Options?</p>
 
 <ol>
-<li>Choose our variable of interest and discard the rest, then pivot or <code>spread</code> the column.</li>
 <li>Subset to each value of <code>Case Def.</code> Then merge those together.</li>
+<li>Choose our variable of interest and discard the rest, then pivot or <code>spread</code> the column.</li>
 <li>Spread each column and then &lsquo;bind&rsquo; the results together.</li>
-</ol></article></slide>
+</ol>
+
+</article></slide><slide class=""><hgroup><h2>Option 1 - filter then merge</h2></hgroup><article  id="option-1---filter-then-merge">
+
+<pre class = 'prettyprint lang-r'># Make subsets
+confirmed &lt;- ebola.data %&gt;% filter(`Case def.` == &#39;Confirmed&#39;) %&gt;% 
+    select(-`Case def.`) %&gt;% distinct() %&gt;% 
+    rename_at(vars(starts_with(&quot;total&quot;)), ~paste(&quot;Confirmed&quot;, .))
+probable  &lt;- ebola.data %&gt;% filter(`Case def.` == &#39;Probable&#39;) %&gt;% 
+    select(-`Case def.`) %&gt;% distinct() %&gt;%  
+    rename_at(vars(starts_with(&quot;total&quot;)), ~paste(&quot;Probable&quot;, .))
+suspected &lt;- ebola.data %&gt;% filter(`Case def.` == &#39;Suspected&#39;) %&gt;% 
+    select(-`Case def.`) %&gt;%  distinct() %&gt;% 
+    rename_at(vars(starts_with(&quot;total&quot;)), ~paste(&quot;Suspected&quot;, .))
+all.cases &lt;- ebola.data %&gt;% filter(`Case def.` == &#39;All&#39;) %&gt;% 
+    select(-`Case def.`) %&gt;%  distinct() %&gt;% 
+    rename_at(vars(starts_with(&quot;total&quot;)), ~paste(&quot;All&quot;, .))</pre>
+
+</article></slide><slide class=""><hgroup><h2>Option 1 - filter then merge</h2></hgroup><article  id="option-1---filter-then-merge-1" class="build">
+
+<pre class = 'prettyprint lang-r'># Join together
+ebola.option1 &lt;- 
+confirmed %&gt;% 
+    full_join(probable) %&gt;% 
+    full_join(suspected) %&gt;% 
+    full_join(all.cases)</pre>
+
+<pre class = 'prettyprint lang-message'>## Joining, by = c(&quot;SheetName&quot;, &quot;Country&quot;, &quot;Country Report Date&quot;)
+## Joining, by = c(&quot;SheetName&quot;, &quot;Country&quot;, &quot;Country Report Date&quot;)
+## Joining, by = c(&quot;SheetName&quot;, &quot;Country&quot;, &quot;Country Report Date&quot;)</pre>
+
+<pre class = 'prettyprint lang-r'>glimpse(ebola.option1)</pre>
+
+<pre >## Observations: 838
+## Variables: 11
+## $ SheetName                &lt;chr&gt; &quot;Jan 06, 2016&quot;, &quot;Jan 0...
+## $ Country                  &lt;chr&gt; &quot;Guinea&quot;, &quot;Liberia&quot;, &quot;...
+## $ `Confirmed Total cases`  &lt;int&gt; 3351, 3151, 9, 8704, 1...
+## $ `Confirmed Total deaths` &lt;int&gt; 2083, 0, 3, 3589, 0, 0...
+## $ `Country Report Date`    &lt;dttm&gt; 2015-12-27, 2015-05-0...
+## $ `Probable Total cases`   &lt;int&gt; 453, 1879, 0, 287, 0, ...
+## $ `Probable Total deaths`  &lt;int&gt; 453, 0, 0, 208, 0, 0, ...
+## $ `Suspected Total cases`  &lt;int&gt; 0, 5636, 0, 5131, 0, 0...
+## $ `Suspected Total deaths` &lt;int&gt; 0, 0, 0, 158, 0, 0, 0,...
+## $ `All Total cases`        &lt;int&gt; 3804, 10666, 9, 14122,...
+## $ `All Total deaths`       &lt;int&gt; 2536, 4806, 3, 3955, 0...</pre>
+
+</article></slide><slide class=""><hgroup><h2>Combining data</h2></hgroup><article  id="combining-data">
+
+<div class="keyfunction">
+<p>Use the <strong><code>join</code></strong> family of functions to merge data together:</p>
+
+<ul>
+<li><code>inner_join(a, b)</code> - keep only rows that match both <code>a</code> and <code>b</code>.</li>
+<li><code>left_join(a, b)</code> - keep all rows of <code>a</code> and add columns in <code>b</code> to the rows that match. Unmatched rows will contain missing values.</li>
+<li><code>right_join(a, b)</code> - same as left but swap <code>a</code> and <code>b</code>.</li>
+<li><code>full_join(a, b)</code> - keep all rows of both <code>a</code> and <code>b</code>.</li>
+<li><code>semi_join(a, b)</code> - keep all rows of <code>a</code> that match <code>b</code>, but don’t add columns from <code>b</code>.</li>
+<li><code>anti_join(a, b)</code> - keep only those rows of <code>a</code> that <strong>don’t</strong> match <code>b</code>.</li>
+</ul></div>
+
+<p>Operations have these parameters:</p>
+
+<ul>
+<li><code>by</code> - variables to join on, defaults to common variables</li>
+<li><code>suffix</code> - sufixes to add to distinguish common variables that are not part of <code>by</code></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Option 2 - pick 1 &amp; spread</h2></hgroup><article  id="option-2---pick-1-spread" class="build">
+
+<pre class = 'prettyprint lang-r'>ebola.option2 &lt;- 
+    ebola.data %&gt;% 
+    select(SheetName, Country, `Case def.`, `Total cases`, `Country Report Date`) %&gt;% 
+    tidyr::spread(&#39;Case def.&#39;, &#39;Total cases&#39;)
+glimpse(ebola.option2)</pre>
+
+<pre >## Observations: 838
+## Variables: 7
+## $ SheetName             &lt;chr&gt; &quot;Apr 01&quot;, &quot;Apr 01&quot;, &quot;Apr ...
+## $ Country               &lt;chr&gt; &quot;Guinea&quot;, &quot;Liberia&quot;, &quot;Mal...
+## $ `Country Report Date` &lt;dttm&gt; 2015-03-29, 2015-03-29, ...
+## $ All                   &lt;int&gt; 3492, 9712, 8, 20, 1, 119...
+## $ Confirmed             &lt;int&gt; 3068, 3151, 7, 19, 1, 854...
+## $ Probable              &lt;int&gt; 414, 1879, 1, 1, 0, 287, ...
+## $ Suspected             &lt;int&gt; 10, 4682, 0, 0, 0, 3142, ...</pre>
+
+</article></slide><slide class=""><hgroup><h2>Option 3 - Spread each and merge</h2></hgroup><article  id="option-3---spread-each-and-merge">
+
+<pre class = 'prettyprint lang-r'># spread each
+cases &lt;- ebola.data %&gt;% select(-`Total deaths`) %&gt;% 
+    tidyr::spread(&#39;Case def.&#39;, &#39;Total cases&#39;)
+deaths &lt;-  ebola.data %&gt;% select(-`Total cases`) %&gt;% 
+    tidyr::spread(&#39;Case def.&#39;, &#39;Total deaths&#39;)
+ebola.option3 &lt;- 
+    full_join( cases, deaths
+             , c(&#39;SheetName&#39;, &#39;Country&#39;, &#39;Country Report Date&#39;)
+             , suffix = c(&quot;.cases&quot;, &quot;.deaths&quot;)) 
+glimpse(ebola.option3)</pre>
+
+<pre >## Observations: 838
+## Variables: 11
+## $ SheetName             &lt;chr&gt; &quot;Apr 01&quot;, &quot;Apr 01&quot;, &quot;Apr ...
+## $ Country               &lt;chr&gt; &quot;Guinea&quot;, &quot;Liberia&quot;, &quot;Mal...
+## $ `Country Report Date` &lt;dttm&gt; 2015-03-29, 2015-03-29, ...
+## $ All.cases             &lt;int&gt; 3492, 9712, 8, 20, 1, 119...
+## $ Confirmed.cases       &lt;int&gt; 3068, 3151, 7, 19, 1, 854...
+## $ Probable.cases        &lt;int&gt; 414, 1879, 1, 1, 0, 287, ...
+## $ Suspected.cases       &lt;int&gt; 10, 4682, 0, 0, 0, 3142, ...
+## $ All.deaths            &lt;int&gt; 2314, 4332, 6, 8, 0, 3799...
+## $ Confirmed.deaths      &lt;int&gt; 1900, 0, 0, 7, 0, 3433, 0...
+## $ Probable.deaths       &lt;int&gt; 414, 0, 0, 1, 0, 208, 0, ...
+## $ Suspected.deaths      &lt;int&gt; 0, 0, 0, 0, 0, 158, 0, 0,...</pre>
+
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Summarization</h2></hgroup><article  id="summarization">
+
+</article></slide><slide class=""><hgroup><h2>Summarization</h2></hgroup><article  id="summarization-1">
+
+<div class="keyfunction">
+<dl>
+<dt><code>summarise(data, ...)</code></dt>
+<dd><p>Take the data and summarise it by performing the <code>...</code> operations to it.</p></dd>
+</dl></div>
+
+<pre class = 'prettyprint lang-r'>summarize( ebola.option3
+         , &#39;Observations&#39; = n()
+         , &#39;Number of countries&#39; = n_distinct(Country)
+         , &quot;# of Reporting dates&quot; = n_distinct(`Country Report Date`)
+         , max.cases = max(All.cases, na.rm=TRUE)
+         , max.deaths = max(All.deaths, na.rm=TRUE)
+         )</pre>
+
+<table class = 'rmdtable'>
+<tr class="header">
+<th align="right">Observations</th>
+<th align="right">Number of countries</th>
+<th align="right"># of Reporting dates</th>
+<th align="right">max.cases</th>
+<th align="right">max.deaths</th>
+</tr>
+<tr class="odd">
+<td align="right">838</td>
+<td align="right">11</td>
+<td align="right">120</td>
+<td align="right">14122</td>
+<td align="right">4806</td>
+</tr>
+</table>
+
+</article></slide><slide class=""><hgroup><h2>Grouped Summarization</h2></hgroup><article  id="grouped-summarization">
+
+<div class="keyfunction">
+<dl>
+<dt><code>group_by(data, ...)</code></dt>
+<dd><p>Take the data and group it by variables specified in <code>...</code>,<br/>all subsequent operations should be done by group.</p></dd>
+</dl></div>
+
+<pre class = 'prettyprint lang-r'>ebola.option3 %&gt;% group_by(Country) %&gt;% 
+  summarise( &quot;# of Reporting dates&quot; = n_distinct(`Country Report Date`)
+           , max.cases = max(All.cases, na.rm=TRUE)
+           , max.deaths = max(All.deaths, na.rm=TRUE)
+           )</pre>
+
+</article></slide><slide class=""><hgroup><h2>Grouped Summarization</h2></hgroup><article  id="grouped-summarization-1">
+
+<table class = 'rmdtable'>
+<tr class="header">
+<th align="left">Country</th>
+<th align="right"># of Reporting dates</th>
+<th align="right">max.cases</th>
+<th align="right">max.deaths</th>
+</tr>
+<tr class="odd">
+<td align="left">Guinea</td>
+<td align="right">91</td>
+<td align="right">3810</td>
+<td align="right">2536</td>
+</tr>
+<tr class="even">
+<td align="left">Italy</td>
+<td align="right">26</td>
+<td align="right">1</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">Liberia</td>
+<td align="right">53</td>
+<td align="right">10666</td>
+<td align="right">4806</td>
+</tr>
+<tr class="even">
+<td align="left">Liberia2</td>
+<td align="right">27</td>
+<td align="right">9</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">Mali</td>
+<td align="right">68</td>
+<td align="right">8</td>
+<td align="right">6</td>
+</tr>
+<tr class="even">
+<td align="left">Nigeria</td>
+<td align="right">16</td>
+<td align="right">22</td>
+<td align="right">8</td>
+</tr>
+<tr class="odd">
+<td align="left">Senegal</td>
+<td align="right">15</td>
+<td align="right">3</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">Sierra Leone</td>
+<td align="right">84</td>
+<td align="right">14122</td>
+<td align="right">3955</td>
+</tr>
+<tr class="odd">
+<td align="left">Spain</td>
+<td align="right">16</td>
+<td align="right">1</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">United Kingdom</td>
+<td align="right">47</td>
+<td align="right">1</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">United States of America</td>
+<td align="right">74</td>
+<td align="right">4</td>
+<td align="right">1</td>
+</tr>
+</table>
+
+</article></slide><slide class=""><hgroup><h2>Question</h2></hgroup><article  id="question" class="flexbox vcenter build">
+
+<p>Remember the wide data problem?</p>
+
+<p>Time to go back</p>
+
+</article></slide><slide class=""><hgroup><h2>Exercise</h2></hgroup><article  id="exercise">
+
+<table class = 'rmdtable'>
+<col width="8.333333%" />
+<col width="66.666667%" />
+<tr class="odd">
+<td align="center">1.</td>
+<td align="left">Decide on the variable of interest, our <code>value</code></td>
+</tr>
+<tr class="even">
+<td align="center">1.5</td>
+<td align="left">Summarise to reduce the data to one row per country x reporting date</td>
+</tr>
+<tr class="odd">
+<td align="center">2.</td>
+<td align="left"><code>spread</code> out the number of cases by date.</td>
+</tr>
+</table>
+
+<div id="timer1" warnafter="30" onclick="startTimer()" class="timer">
+<p>5:00</p></div>
+
+</article></slide><slide class=""><hgroup><h2>Question</h2></hgroup><article  id="question-1" class="flexbox vcenter build">
+
+<p>What should we do with our data?</p>
+
+<p>This data set on it’s own is not very interesting.</p>
+
+<p>Let’s build something interesting.</p>
+
+<img src='images/Legos.gif' title=''/>
+
+<p>)) ## World Bank Data</p>
+
+<p>The <code>wbstats</code> package provides access to the world bank database.</p>
+
+<pre class = 'prettyprint lang-r'>library(wbstats)
+wbsearch(&#39;population&#39;, extra=TRUE)</pre>
+
+<pre class = 'prettyprint lang-warning'>## Warning: `wbsearch()` is deprecated as of wbstats 1.0.0.
+## Please use `wb_search()` instead.
+## This warning is displayed once per session.
+## Call `lifecycle::last_warnings()` to see where this warning was generated.</pre>
+
+<pre class = 'prettyprint lang-r'>wb(indicator =&quot;SP.POP.TOTL&quot;, startdate = 2014, enddate=2014)</pre>
+
+<pre class = 'prettyprint lang-warning'>## Warning: `wb()` is deprecated as of wbstats 1.0.0.
+## Please use `wb_data()` instead.
+## This warning is displayed once per session.
+## Call `lifecycle::last_warnings()` to see where this warning was generated.</pre>
+
+<p>Run these commands investigate the output and let’s discuss.</p>
+
+</article></slide><slide class=""><hgroup><h2>Recoding Country</h2></hgroup><article  id="recoding-country">
+
+<p>To merge the the world bank data to our ebola data we need a common country variable.</p>
+
+<pre class = 'prettyprint lang-r'>library(countrycode)
+long.ebola &lt;- mutate( ebola.option3
+                    , iso3c = countrycode(Country, &quot;country.name&quot;, &quot;iso3c&quot;))</pre>
+
+<h3>Allways, allways, allways, check your results.</h3>
+
+<pre class = 'prettyprint lang-r'>assert_that(!any(is.na(long.ebola$iso3c)))</pre>
+
+<pre >## [1] TRUE</pre>
+
+</article></slide><slide class=""><hgroup><h2>Get the desired population data</h2></hgroup><article  id="get-the-desired-population-data">
+
+<ul>
+<li><code>SP.URB.TOTL.ZS</code> - Percentage of Population in Urban Areas (in % of Total Population)</li>
+<li><code>SP.POP.TOTL.MA.ZS</code> - Population, male (% of total)</li>
+<li><code>SP.POP.TOTL</code> - Population, total</li>
+<li><code>EN.POP.DNST</code> - Population density (people per sq km)</li>
+<li><code>IN.POV.HCR.EST.TOTL</code> - Poverty HCR Estimates (%) - Total</li>
+<li><code>NY.GDP.PCAP.CD</code> - GDP per capita (current US$)</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>pop.vars &lt;- c( &#39;SP.URB.TOTL.ZS&#39;, &#39;SP.POP.TOTL.MA.ZS&#39;
+             , &#39;SP.POP.TOTL&#39;, &#39;EN.POP.DNST&#39;
+             , &#39;IN.POV.HCR.EST.TOTL&#39;, &#39;NY.GDP.PCAP.CD&#39;)
+pop.data &lt;- wb( country = unique(long.ebola$iso3c)
+              , indicator = pop.vars
+              , startdate = 2014, enddate=2014)</pre>
+
+</article></slide><slide class=""><hgroup><h2>Look at the data</h2></hgroup><article  id="look-at-the-data" class="flexbox vcenter build">
+
+<ol>
+<li><p>What format is it in?</p></li>
+<li><p>Are there any problems?</p></li>
+<li><p>Did we get get everything we expected?</p></li>
+</ol>
+
+</article></slide><slide class=""><hgroup><h2>Reshape and join together</h2></hgroup><article  id="reshape-and-join-together">
+
+<pre class = 'prettyprint lang-r'>meta.pop.data &lt;- select(pop.data, variable=indicatorID, label=indicator) %&gt;% distinct()
+our.data &lt;- 
+    pop.data %&gt;% 
+    select(iso3c, value, indicatorID) %&gt;% 
+    spread(indicatorID, value) %&gt;% 
+    right_join(long.ebola)</pre>
+
+<pre class = 'prettyprint lang-message'>## Joining, by = &quot;iso3c&quot;</pre>
+
+</article></slide><slide class=""><hgroup><h2>Exercise/break</h2></hgroup><article  id="exercisebreak">
+
+<p>Create a table 1</p>
+
+<ul>
+<li>Restrict the data to the most recent only.</li>
+<li>Columns should be Africa, Other, and Total.</li>
+<li>Rows should be summaries of the variables we have.
+
+<ul>
+<li>minimum, median, mean, maximum …</li>
+</ul></li>
+</ul>
+
+<div id="timer2" warnafter="90" onclick="startTimer()" class="timer">
+<p>15:00</p></div></article></slide>
 
 
   <slide class="backdrop"></slide>
