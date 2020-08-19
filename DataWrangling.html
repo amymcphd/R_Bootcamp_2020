@@ -223,13 +223,13 @@ requireNamespace(&#39;zoo&#39;)#&lt; time series</pre>
 
 <pre class = 'prettyprint lang-r'>ebola &lt;- readRDS(&quot;data/ebola.data.rds&quot;)</pre>
 
-</article></slide><slide class=""><hgroup><h2>Always check your data</h2></hgroup><article  id="always-check-your-data" class="build">
+</article></slide><slide class=""><hgroup><h2>Always check your data</h2></hgroup><article  class="build" id="always-check-your-data">
 
 <p>Any problems with the data?</p>
 
 <img src='images/shock.gif' title=''/>
 
-</article></slide><slide class=""><hgroup><h2>Ebola Data Problem</h2></hgroup><article  id="ebola-data-problem" class="build">
+</article></slide><slide class=""><hgroup><h2>Ebola Data Problem</h2></hgroup><article  class="build" id="ebola-data-problem">
 
 <p>The Most obvious is that <code>Country Report Date</code> should be repeated down the rows.</p>
 
@@ -244,7 +244,7 @@ requireNamespace(&#39;zoo&#39;)#&lt; time series</pre>
 <li><code>transmute()</code> - create a new set of variables based on previous.</li>
 </ul>
 
-</article></slide><slide class=""><hgroup><h2>Ebola Data Problem</h2></hgroup><article  id="ebola-data-problem-1" class="build">
+</article></slide><slide class=""><hgroup><h2>Ebola Data Problem</h2></hgroup><article  class="build" id="ebola-data-problem-1">
 
 <pre class = 'prettyprint lang-r'>ebola.data %&lt;&gt;% 
     mutate_at(&#39;Country Report Date&#39;, zoo::na.locf)</pre>
@@ -499,11 +499,9 @@ requireNamespace(&#39;zoo&#39;)#&lt; time series</pre>
 <td align="right">1879</td>
 <td align="right">0</td>
 </tr>
-<tr class="odd">
-<td align="right">## <code>select()</code></td>
-<td align="right">- The helpers</td>
-</tr>
 </table>
+
+</article></slide><slide class=""><hgroup><h2><code>select()</code> - The helpers</h2></hgroup><article  id="select---the-helpers">
 
 <p>The available helpers are:</p>
 
@@ -570,7 +568,7 @@ requireNamespace(&#39;zoo&#39;)#&lt; time series</pre>
 </tr>
 </table>
 
-</article></slide><slide class=""><hgroup><h2>Subsetting data</h2></hgroup><article  id="subsetting-data" class="build">
+</article></slide><slide class=""><hgroup><h2>Subsetting data</h2></hgroup><article  class="build" id="subsetting-data">
 
 <div class="keyfunction">
 <p>Subset data with the <code>filter()</code> function.</p></div>
@@ -1379,11 +1377,11 @@ requireNamespace(&#39;zoo&#39;)#&lt; time series</pre>
       , `Case def.` == &#39;Confirmed&#39;
       )</pre>
 
-</article></slide><slide class=""><hgroup><h2><code>distinct()</code> - normalizing</h2></hgroup><article  id="distinct---normalizing" class="build">
+</article></slide><slide class=""><hgroup><h2><code>distinct()</code> - normalizing</h2></hgroup><article  class="build" id="distinct---normalizing">
 
 <p>From the previous filter example note that report date is repeated week after week.<br/>:::{.keyfunction} To get only distinct observations, use <code>distinct()</code>. :::</p>
 
-</article></slide><slide class=""><hgroup><h2><code>distinct()</code> - normalizing</h2></hgroup><article  id="distinct---normalizing-1" class="build">
+</article></slide><slide class=""><hgroup><h2><code>distinct()</code> - normalizing</h2></hgroup><article  class="build" id="distinct---normalizing-1">
 
 <pre class = 'prettyprint lang-r'>`Confirmed Cases for Sierra Leone` &lt;- 
 filter( ebola.data
@@ -2073,7 +2071,7 @@ filter( ebola.data
 </ul></li>
 </ul>
 
-</article></slide><slide class=""><hgroup><h2>Task: make &lsquo;Case def.&rsquo; separate columns</h2></hgroup><article  id="task-make-case-def.-separate-columns" class="build">
+</article></slide><slide class=""><hgroup><h2>Task: make &lsquo;Case def.&rsquo; separate columns</h2></hgroup><article  class="build" id="task-make-case-def.-separate-columns">
 
 <p>We would like to make <code>Case def.</code> separate columns there are however 2 possible response variables:</p>
 
@@ -2106,7 +2104,7 @@ all.cases &lt;- ebola.data %&gt;% filter(`Case def.` == &#39;All&#39;) %&gt;%
     select(-`Case def.`) %&gt;%  distinct() %&gt;% 
     rename_at(vars(starts_with(&quot;total&quot;)), ~paste(&quot;All&quot;, .))</pre>
 
-</article></slide><slide class=""><hgroup><h2>Option 1 - filter then merge</h2></hgroup><article  id="option-1---filter-then-merge-1" class="build">
+</article></slide><slide class=""><hgroup><h2>Option 1 - filter then merge</h2></hgroup><article  class="build" id="option-1---filter-then-merge-1">
 
 <pre class = 'prettyprint lang-r'># Join together
 ebola.option1 &lt;- 
@@ -2156,7 +2154,7 @@ confirmed %&gt;%
 <li><code>suffix</code> - sufixes to add to distinguish common variables that are not part of <code>by</code></li>
 </ul>
 
-</article></slide><slide class=""><hgroup><h2>Option 2 - pick 1 &amp; spread</h2></hgroup><article  id="option-2---pick-1-spread" class="build">
+</article></slide><slide class=""><hgroup><h2>Option 2 - pick 1 &amp; spread</h2></hgroup><article  class="build" id="option-2---pick-1-spread">
 
 <pre class = 'prettyprint lang-r'>ebola.option2 &lt;- 
     ebola.data %&gt;% 
@@ -2327,7 +2325,7 @@ glimpse(ebola.option3)</pre>
 </tr>
 </table>
 
-</article></slide><slide class=""><hgroup><h2>Question</h2></hgroup><article  id="question" class="flexbox vcenter build">
+</article></slide><slide class=""><hgroup><h2>Question</h2></hgroup><article  class="flexbox vcenter build" id="question">
 
 <p>Remember the wide data problem?</p>
 
@@ -2352,10 +2350,10 @@ glimpse(ebola.option3)</pre>
 </tr>
 </table>
 
-<div id="timer1" warnafter="30" onclick="startTimer()" class="timer">
+<div class="timer" warnafter="30" onclick="startTimer()" id="timer1">
 <p>5:00</p></div>
 
-</article></slide><slide class=""><hgroup><h2>Question</h2></hgroup><article  id="question-1" class="flexbox vcenter build">
+</article></slide><slide class=""><hgroup><h2>Question</h2></hgroup><article  class="flexbox vcenter build" id="question-1">
 
 <p>What should we do with our data?</p>
 
@@ -2418,7 +2416,7 @@ pop.data &lt;- wb( country = unique(long.ebola$iso3c)
               , indicator = pop.vars
               , startdate = 2014, enddate=2014)</pre>
 
-</article></slide><slide class=""><hgroup><h2>Look at the data</h2></hgroup><article  id="look-at-the-data" class="flexbox vcenter build">
+</article></slide><slide class=""><hgroup><h2>Look at the data</h2></hgroup><article  class="flexbox vcenter build" id="look-at-the-data">
 
 <ol>
 <li><p>What format is it in?</p></li>
@@ -2451,7 +2449,7 @@ our.data &lt;-
 </ul></li>
 </ul>
 
-<div id="timer2" warnafter="90" onclick="startTimer()" class="timer">
+<div class="timer" warnafter="90" onclick="startTimer()" id="timer2">
 <p>15:00</p></div></article></slide>
 
 
