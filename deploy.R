@@ -76,8 +76,29 @@ function( dir = '.'
             branch))
     })
 }
+
+needs_render <- function(in.dir = '.', out.dir = '_site'){
+
+    out.file.info <- list.files(out.dir, "*.html", full.names=TRUE)  %>%
+        file.info() %>% as_tibble(rownames='out.file') %>%
+        mutate(base = out.file %>% basename() %>% xfun::sans_ext())
+
+    in.file.info <- list.files(in.dir, "*.Rmd", full.names=TRUE) %>%
+        file.info() %>% as_tibble(rownames='in.file') %>%
+        mutate(base = in.file %>% basename() %>% xfun::sans_ext())
+
+
+    full_join(in.file.info, out.file.info, 'base',
+              suffix = c('_in', '_out')) %>%
+        filter( mtime_in> mtime_out
+              | is.na(mtime_out)
+              ) %>% pull(in.file) %>%
+        basename
+}
+
+
 deploy <-
-function( dir = "."
+function( dir = ".", render = NA
         , commit_message = "Deployed"
         , branch = "gh-pages"
         , remote = "origin"
@@ -101,8 +122,15 @@ function( dir = "."
     on.exit(github_worktree_remove(dest_dir), add = TRUE)
 
     # write_lines(paste("output_dir:",shQuote(gsub("/", "\\\\\\\\", fs::path_norm(dest_dir)))), "_site.yml", append=TRUE)
-    rmarkdown::render_site(dir)
-    file.copy(list.files("_site", full.names=TRUE), dest_dir, recursive=TRUE)
+    if(is.na(render)){
+        render <- needs_render()
+        if(length(render)==0)
+            render <- FALSE
+    }
+    # if (is.character(render))
+    if (render)
+        rmarkdown::render_site(dir)
+    file.copy(list.files("_site", full.names=TRUE), dest_dir, recursive=TRUE, overwrite=TRUE)
 
     # git("checkout", "_site.yml")
 

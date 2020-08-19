@@ -12,29 +12,40 @@ This webpage will be your guide to this course. Please Start by reading the
 
 ## Slides
 
-* [Introductions](Introductions.html)
-* [Principles](Principles.html)
-* [Resources](Resources.html)
-* [Syntax & Data Structures](Syntax.html)
-* [Packages](Packages.html)
-* [Tidyverse](Tidyverse.html)
-* [Getting Data](GettingData.html)
-
+* [Introductions](Introductions.html) [![](images/pdf.png)](pdf/Introductions.pdf)
+* [Principles](Principles.html) [![](images/pdf.png)](pdf/Principles.pdf)
+* [Resources](Resources.html) [![](images/pdf.png)](pdf/Resources.pdf)
+* [Syntax & Data Structures](Syntax.html) [![](images/pdf.png)](pdf/Syntax.pdf)
+* [Packages](Packages.html) [![](images/pdf.png)](pdf/Packages.pdf)
+* [Tidyverse](Tidyverse.html) [![](images/pdf.png)](pdf/Tidyverse.pdf)
+* [Getting Data](GettingData.html)[![](images/pdf.png)](pdf/GettingData.pdf)
+* [Data Wrangling](DataWrangling.html) [![](images/pdf.png)](pdf/DataWrangling.pdf)
+* [Graphics](Graphics.html) [![](images/pdf.png)](pdf/Graphics.pdf)
 
 ## Data
 
 * Ebola Data
     + [Source](https://data.humdata.org/dataset/ebola-cases-2014) - The Humanitarian Data Exchange       
     + [Data](https://github.com/halpo/R_Bootcamp_2020/raw/master/data/ebola-cases-and-deaths-who-gar-sitrep.xlsx)
-    + [Script - version 1](https://github.com/halpo/R_Bootcamp_2020/tree/master/reading_ebola_data.R)
-* Bourdeaux Wine Data
+    + [Script](https://github.com/halpo/R_Bootcamp_2020/tree/master/reading_ebola_data.R)
+* Bordeaux Wine Data
     + [Source](https://link.springer.com/book/10.1007/978-0-387-09608-7) - 
         Sheather, Simon. *A modern approach to regression with R.* Springer Science & Business Media, 2009.
     + [Data](https://github.com/halpo/R_Bootcamp_2020/raw/master/data/Bordeaux.csv)
+    + [Script](https://github.com/halpo/R_Bootcamp_2020/tree/master/read_ing_ebola_data_bordeaux.R)
 
 ## Videos
 
+* [Day 1 - Full](https://youtu.be/ODPWOfPHVsk)
+* [Day 2 - Full](https://youtu.be/D0geSa7Y1kc)
 
 
-
+# {.footer}
+<hr>
+```{css, echo=FALSE}
+.footer p {
+    font-size: smaller
+}
+```
+Last Updated: *`r Sys.time()`*
 

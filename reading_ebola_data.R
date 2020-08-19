@@ -187,5 +187,28 @@ last(var.names)
 
 intersect(var.names[[1]], last(var.names))
 
+save(all.ebola.raw.data.df, file="data/all.ebola.raw.data.df.RData")
+saveRDS(all.ebola.raw.data.df, file="data/all.ebola.raw.data.df.rds")
+
+ebola.data <- readRDS("C:/Users/u0092104/Box/R Bootcamp/R Bootcamp 2020/data/all.ebola.raw.data.df.rds")
+
+library(magrittr)
+ebola.data %<>% mutate_at('Country Report Date', zoo::na.locf)
+
+filter( ebola.data
+      , Country == 'Nigeria'
+      , `Case def.` == 'Confirmed'
+      )
+filter( ebola.data
+      , (Country == 'Nigeria') | (Country == 'Sierra Leone')
+      , `Case def.` == 'Confirmed'
+      )
 
 
+`Confirmed Cases for Sierra Leone` <-
+filter( ebola.data
+      , Country == 'Sierra Leone'
+      , `Case def.` == 'Confirmed'
+      ) %>%
+    select(last_col(), Country, `Case def.`, starts_with('Total')) %>%
+    distinct()

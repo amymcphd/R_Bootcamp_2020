@@ -30,6 +30,7 @@ options( repos="https://cran.rstudio.org"
        , width=60
        )
 ```
+
 # Getting Data
 
 ![](images/datatable.png)

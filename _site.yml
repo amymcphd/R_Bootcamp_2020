@@ -6,3 +6,4 @@ navbar:
       href: index.html
     - text: "Syllabus"
       href: syllabus.html
+  exclude: ["*.xlsx", "data", "*.pdn"]

@@ -81,12 +81,12 @@ All are time permitting and we may not get to some of the later ones.
     * Data Sources
     * Reading Data
     * Saving Data
-9. Data Manipulations
+9. [Data Manipulations](DataWrangling.html)
     * Reshaping Data, Wide/Long, Nesting, Etc.
     * Subsetting/Filtering
     * Merging/Joining
-10. Summarization
-11. Graphics
+10. [Summarization](DataWrangling.html)
+11. [Graphics](Graphics.html)
     * Base Graphics
     * Grammar Based, `ggplot2`
 12. Analyses & Hypothesis Testing

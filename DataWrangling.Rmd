@@ -54,7 +54,7 @@ library(wbstats)     #< World bank data.
 library(countrycode) #< Country coding
 library(assertthat)  #< Results checking
 library(lubridate)   #< Date manipulations
-requireNamespace(zoo)#< time series
+requireNamespace('zoo')#< time series
 ```
 
 ## Loading data
@@ -81,6 +81,15 @@ The Most obvious is that `Country Report Date` should be repeated down the rows.
 
 Fix with `dplyr::mutate()` + `zoo::na.locf()` (Missing last observation carried forward.)
 
+## `mutate()` variants
+
+* `mutate()` - modify/add variables
+* `mutate_at()` - modify a set of variables.
+* `mutate_if()` - modify variables meeting a criteria
+* `transmute()` - create a new set of variables based on previous.
+
+##  Ebola Data Problem{.build}
+
 ```{r}
 ebola.data %<>% 
     mutate_at('Country Report Date', zoo::na.locf)
@@ -90,6 +99,171 @@ ebola.data %<>%
 1. We used the assign-back pipe `%<>%` to modify in place. *Generally this is frowned upon*
 2. Note the double colon for using na.locf from zoo without attaching the package.
 
+## `select()` - Choosing variables
+
+:::{.keyfunction}
+Use `select()` to choose the variables desired.
+:::
+
+### Basic Usage
+
+```r
+select(data, ...)
+```
+
+Over the next few examples we will explore the forms `...` can take
+
+## `select()` - Variable Names
+
+the easiest is with variable names:
+
+```{r}
+ebola.data %>% select(Country, `Case def.`, `Total cases`) %>% head()
+```
+
+## `select()` - Dropping by Variable Names
+
+You can select everything **but** a variable with the minus operator
+
+```{r}
+ebola.data %>% select(-`Total cases`) %>% head()
+```
+
+## `select()` - By the numbers
+
+You can select by variable position as well.
+
+```{r}
+ebola.data %>% select(1:4) %>% head()
+```
+
+## `select()` - by variable range
+
+Use single colon `:` with variable names to select variables named and eveything in between:
+
+
+```{r}
+ebola.data %>% select(Country:`Total cases`) %>% head()
+```
+
+## `select()` - by helpers
+
+selection helpers are also provided:
+
+```{r}
+ebola.data %>% select(starts_with("Total")) %>% head()
+```
+
+## `select()` - The helpers
+
+The available helpers are:
+
+* `starts_with()`
+* `ends_with()`
+* `contains()` - must match literally
+* `matches()` - Regular expression match 
+* `num_range()` - numerical ranged variables with a prefix
+* `all_of()` - must match all of given variables named in a vector.
+* `any_of()` - select any variables present in given vector, but no error if not present.
+* `everything()` - Matches all variables, useful when reordering variables.
+* `last_col()` - The last column
+
+## `select()` - Multiple
+
+You may use multiple forms together
+
+```{r}
+ebola.data %>% select(last_col(), 2:3, `Total cases`) %>% head()
+```
+
+## Subsetting data {.build}
+
+:::{.keyfunction}
+Subset data with the `filter()` function.
+:::
+
+The base R version is subset, but it is FAR less robust.
+
+It takes the form of
+```r
+filter(data, expr1, expr2, ...)
+```
+
+where `data` is the data set, and `expr1`, `expr2`, ... are the criteria 
+expressions evaluated *in the context of the data*. 
+Data must meet *all* ctriteria to remain.
+
+
+## `filter()` Example
+
+Subset data to only confirmed cases for Nigeria.
+
+```{r}
+filter( ebola.data
+      , Country == 'Nigeria'
+      , `Case def.` == 'Confirmed'
+      )
+```
+
+
+## `filter()` Example 2 
+
+to perform an or use the single `|`
+
+```r
+filter( ebola.data
+      , (Country == 'Nigeria') | (Country == 'Sierra Leone')
+      , `Case def.` == 'Confirmed'
+      )
+```
+
+an alternate form would be to use `%in%`
+
+```r
+filter( ebola.data
+      , Country %in% c('Nigeria', 'Sierra Leone')
+      , `Case def.` == 'Confirmed'
+      )
+```
+
+## `distinct()` - normalizing {.build}
+
+From the previous filter example note that report date is repeated week after week.  
+:::{.keyfunction}
+To get only distinct observations, use `distinct()`.
+:::
+
+## `distinct()` - normalizing {.build}
+
+```{r}
+`Confirmed Cases for Sierra Leone` <- 
+filter( ebola.data
+      , Country == 'Sierra Leone'
+      , `Case def.` == 'Confirmed'
+      ) %>% 
+    select(last_col(), Country, `Case def.`, starts_with('Total')) %>% 
+    distinct()
+```
+```{r echo=FALSE}
+`Confirmed Cases for Sierra Leone`
+```
+
+## Sorting Data
+
+:::{.keyfunction}
+To sort data use `arrange()`
+:::
+
+`sort()` is the base version but again, less robust.
+
+Arrange allows you to give sorting criteria.
+
+## `arrange()` Example
+```{r}
+`Confirmed Cases for Sierra Leone` %>% 
+    arrange(`Country Report Date`, desc(`Case def.`)) %>% 
+    head()
+```
 
 ## Reformatting data
 
@@ -98,23 +272,253 @@ ebola.data %<>%
 * Long Data
     - multiple observations for one unit are in rows.
 
-## Task make 'Case def.' separate columns{.build}
+## Task: make 'Case def.' separate columns{.build}
 
 We would like to make `Case def.` separate columns there are however 
-3 possible response variables:
+2 possible response variables:
 
-1. Total cases
-2. Cases last 21.days
+1. Total Cases
 3. Total Deaths
 
 Options?
 
-1. Choose our variable of interest and discard the rest, then pivot or `spread` the column.
-2. Subset to each value of `Case Def.` Then merge those together.
+1. Subset to each value of `Case Def.` Then merge those together.
+2. Choose our variable of interest and discard the rest, then pivot or `spread` the column.
 3. Spread each column and then 'bind' the results together.
 
+## Option 1 - filter then merge 
+
+```{r}
+# Make subsets
+confirmed <- ebola.data %>% filter(`Case def.` == 'Confirmed') %>% 
+    select(-`Case def.`) %>% distinct() %>% 
+    rename_at(vars(starts_with("total")), ~paste("Confirmed", .))
+probable  <- ebola.data %>% filter(`Case def.` == 'Probable') %>% 
+    select(-`Case def.`) %>% distinct() %>%  
+    rename_at(vars(starts_with("total")), ~paste("Probable", .))
+suspected <- ebola.data %>% filter(`Case def.` == 'Suspected') %>% 
+    select(-`Case def.`) %>%  distinct() %>% 
+    rename_at(vars(starts_with("total")), ~paste("Suspected", .))
+all.cases <- ebola.data %>% filter(`Case def.` == 'All') %>% 
+    select(-`Case def.`) %>%  distinct() %>% 
+    rename_at(vars(starts_with("total")), ~paste("All", .))
+```
+
+## Option 1 - filter then merge {.build}
+
+```{r}
+# Join together
+ebola.option1 <- 
+confirmed %>% 
+    full_join(probable) %>% 
+    full_join(suspected) %>% 
+    full_join(all.cases)
+glimpse(ebola.option1)
+```
+
+## Combining data
+
+:::{.keyfunction}
+
+Use the **`join`** family of functions to merge data together:
+
+* `inner_join(a, b)` - keep only rows that match both `a` and `b`.
+* `left_join(a, b)` - keep all rows of `a` and add columns in `b` to the rows that match.  Unmatched rows will contain missing values.
+* `right_join(a, b)` - same as left but swap `a` and `b`.
+* `full_join(a, b)` - keep all rows of both `a` and `b`.
+* `semi_join(a, b)` - keep all rows of `a` that match `b`, but don't add columns from `b`.
+* `anti_join(a, b)` - keep only those rows of `a` that **don't** match `b`.
+:::
+
+Operations have these parameters:
+
+* `by` - variables to join on, defaults to common variables
+* `suffix` - sufixes to add to distinguish common variables that are not part of `by`
+
+## Option 2 - pick 1 & spread {.build}
+
+```{r}
+ebola.option2 <- 
+    ebola.data %>% 
+    select(SheetName, Country, `Case def.`, `Total cases`, `Country Report Date`) %>% 
+    tidyr::spread('Case def.', 'Total cases')
+glimpse(ebola.option2)
+```
 
 
+## Option 3 - Spread each and merge 
+
+```{r}
+# spread each
+cases <- ebola.data %>% select(-`Total deaths`) %>% 
+    tidyr::spread('Case def.', 'Total cases')
+deaths <-  ebola.data %>% select(-`Total cases`) %>% 
+    tidyr::spread('Case def.', 'Total deaths')
+ebola.option3 <- 
+    full_join( cases, deaths
+             , c('SheetName', 'Country', 'Country Report Date')
+             , suffix = c(".cases", ".deaths")) 
+glimpse(ebola.option3)
+```
 
 
+# Summarization
+
+## Summarization
+
+:::{.keyfunction}
+`summarise(data, ...)`
+
+: Take the data and summarise it by performing the `...` 
+  operations to it.
+:::
+
+```{r}
+summarize( ebola.option3
+         , 'Observations' = n()
+         , 'Number of countries' = n_distinct(Country)
+         , "# of Reporting dates" = n_distinct(`Country Report Date`)
+         , max.cases = max(All.cases, na.rm=TRUE)
+         , max.deaths = max(All.deaths, na.rm=TRUE)
+         )
+```
+
+## Grouped Summarization
+
+:::{.keyfunction}
+`group_by(data, ...)`
+
+: Take the data and group it by variables specified in `...`,  
+  all subsequent operations should be done by group.
+:::
+```{r 'grouped-summary', results='hide'}
+ebola.option3 %>% group_by(Country) %>% 
+  summarise( "# of Reporting dates" = n_distinct(`Country Report Date`)
+           , max.cases = max(All.cases, na.rm=TRUE)
+           , max.deaths = max(All.deaths, na.rm=TRUE)
+           )
+```
+
+## Grouped Summarization
+```{r ref.label='grouped-summary', echo=FALSE}
+ebola.option3 %>% group_by(Country) %>% 
+  summarise( "# of Reporting dates" = n_distinct(`Country Report Date`)
+           , max.cases = max(All.cases, na.rm=TRUE)
+           , max.deaths = max(All.deaths, na.rm=TRUE)
+           )
+```
+
+## Question {.flexbox .vcenter .build}
+
+Remember the wide data problem?
+
+Time to go back
+
+## Exercise
+
+----- -----------------------------------------------
+ 1.   Decide on the variable of interest, our `value`
+ 
+ 1.5  Summarise to reduce the data to one row per 
+      country x reporting date
+ 
+ 2.   `spread` out the number of cases by date.
+-----------------------------------------------------
+
+:::{#timer1 .timer onclick="startTimer()" warnafter=30}
+5:00
+:::
+
+## Question {.flexbox .vcenter .build}
+
+What should we do with our data?
+
+This data set on it's own is not very interesting.
+
+Let's build something interesting.
+
+![](images/Legos.gif)
+
+))
+## World Bank Data
+
+The `wbstats` package provides access to the world bank database.
+
+```{r "wb-population", results='hide'}
+library(wbstats)
+wbsearch('population', extra=TRUE)
+```
+```{r "wb-pop.total", results='hide'}
+wb(indicator ="SP.POP.TOTL", startdate = 2014, enddate=2014)
+```
+
+Run these commands investigate the output and let's discuss.
+
+## Recoding Country
+
+To merge the the world bank data to our ebola data we need a common 
+country variable.
+```{r}
+library(countrycode)
+long.ebola <- mutate( ebola.option3
+                    , iso3c = countrycode(Country, "country.name", "iso3c"))
+```
+
+### Allways, allways, allways, check your results.
+
+```{r}
+assert_that(!any(is.na(long.ebola$iso3c)))
+```
+
+## Get the desired population data
+
+* `SP.URB.TOTL.ZS` - Percentage of Population in Urban Areas (in % of Total Population)
+* `SP.POP.TOTL.MA.ZS` - Population, male (% of total)
+* `SP.POP.TOTL` - Population, total
+* `EN.POP.DNST` - Population density (people per sq km)
+* `IN.POV.HCR.EST.TOTL` - Poverty HCR Estimates (%) - Total
+* `NY.GDP.PCAP.CD` - GDP per capita (current US$)
+```{r}
+pop.vars <- c( 'SP.URB.TOTL.ZS', 'SP.POP.TOTL.MA.ZS'
+             , 'SP.POP.TOTL', 'EN.POP.DNST'
+             , 'IN.POV.HCR.EST.TOTL', 'NY.GDP.PCAP.CD')
+pop.data <- wb( country = unique(long.ebola$iso3c)
+              , indicator = pop.vars
+              , startdate = 2014, enddate=2014)
+```
+
+## Look at the data {.flexbox .vcenter .build}
+
+1. What format is it in?
+
+2. Are there any problems?
+
+3. Did we get get everything we expected?
+
+## Reshape and join together
+
+```{r}
+meta.pop.data <- select(pop.data, variable=indicatorID, label=indicator) %>% distinct()
+our.data <- 
+    pop.data %>% 
+    select(iso3c, value, indicatorID) %>% 
+    spread(indicatorID, value) %>% 
+    right_join(long.ebola)
+```
+```{r include=FALSE}
+save(our.data, meta.pop.data, file="data/our.data.RData")
+```
+
+## Exercise/break
+
+Create a table 1
+
+- Restrict the data to the most recent only.
+- Columns should be Africa, Other, and Total.
+- Rows should be summaries of the variables we have.
+    + minimum, median, mean, maximum ... 
+
+:::{#timer2 .timer onclick="startTimer()" warnafter=90}
+15:00
+:::
 
