@@ -133,7 +133,8 @@ for( i in seq_along(all.ebola.raw.data)){
                  )
 
     all.ebola.raw.data[[i]] <-
-        select(all.ebola.raw.data[[i]], Country, `Case def.`, `Total cases`, `Total deaths`, `Country Report Date`)
+        # select(all.ebola.raw.data[[i]], Country, `Case def.`, `Total cases`, `Total deaths`, `Country Report Date`)
+        select(all.ebola.raw.data[[i]], !!!common.vars)
 
     all.ebola.raw.data[[i]]$SheetNum <- i
 }
@@ -190,10 +191,20 @@ intersect(var.names[[1]], last(var.names))
 save(all.ebola.raw.data.df, file="data/all.ebola.raw.data.df.RData")
 saveRDS(all.ebola.raw.data.df, file="data/all.ebola.raw.data.df.rds")
 
-ebola.data <- readRDS("C:/Users/u0092104/Box/R Bootcamp/R Bootcamp 2020/data/all.ebola.raw.data.df.rds")
+# ebola.data <- readRDS("C:/Users/u0092104/Box/R Bootcamp/R Bootcamp 2020/data/all.ebola.raw.data.df.rds")
+#
+# library(magrittr)
+# ebola.data %<>% mutate_at('Country Report Date', zoo::na.locf)
+# ebola.data %<>% mutate_at('Total deaths', coalesce, 0L)
+# saveRDS(ebola.data, 'data/ebola.data.rds')
 
 library(magrittr)
-ebola.data %<>% mutate_at('Country Report Date', zoo::na.locf)
+
+ebola.data <- all.ebola.raw.data.df %>%
+    mutate_at('Country Report Date', zoo::na.locf) %>%
+    mutate_at(c('Total deaths', 'Total cases'), coalesce, 0L)
+
+saveRDS(ebola.data, 'ebola.data.rds')
 
 filter( ebola.data
       , Country == 'Nigeria'
@@ -212,3 +223,147 @@ filter( ebola.data
       ) %>%
     select(last_col(), Country, `Case def.`, starts_with('Total')) %>%
     distinct()
+
+
+library(tidyverse)
+
+# Make subsets
+confirmed <- ebola.data %>% filter(`Case def.` == 'Confirmed') %>%
+    select(-`Case def.`) %>% distinct() %>%
+    rename_at(vars(starts_with("total")), ~paste("Confirmed", .))
+probable  <- ebola.data %>% filter(`Case def.` == 'Probable') %>%
+    select(-`Case def.`) %>% distinct() %>%
+    rename_at(vars(starts_with("total")), ~paste("Probable", .))
+suspected <- ebola.data %>% filter(`Case def.` == 'Suspected') %>%
+    select(-`Case def.`) %>%  distinct() %>%
+    rename_at(vars(starts_with("total")), ~paste("Suspected", .))
+all.cases <- ebola.data %>% filter(`Case def.` == 'All') %>%
+    select(-`Case def.`) %>%  distinct() %>%
+    rename_at(vars(starts_with("total")), ~paste("All", .))
+
+ebola.option1 <-
+confirmed %>%
+    full_join(probable) %>%
+    full_join(suspected) %>%
+    full_join(all.cases)
+
+glimpse(ebola.option1)
+
+
+
+a <- ebola.data %>% filter(`Case def.` == 'Confirmed') # %>% select(-`Case def.`)
+b  <- ebola.data %>% filter(`Case def.` == 'Probable') #%>% select(-`Case def.`)
+
+full_join(a,b, )
+
+inner_join(a,b, by = c("SheetName", "Country", "Country Report Date"), suffix = c(' Confirmed', ' Probable'))
+
+ebola.data %>% filter(Country == 'Liberia2', `Country Report Date` == lubridate::ymd('2015-01-03'))
+
+ebola.option2 <-
+    ebola.data %>%
+    select(SheetNum, Country, `Case def.`, `Total cases`, `Country Report Date`) %>%
+    tidyr::spread('Case def.', 'Total cases', fill=0L)
+glimpse(ebola.option2)
+
+cases <- ebola.data %>% select(-`Total deaths`) %>%
+    tidyr::spread('Case def.', 'Total cases')
+deaths <-  ebola.data %>% select(-`Total cases`) %>%
+    tidyr::spread('Case def.', 'Total deaths')
+ebola.option3 <-
+    full_join( cases, deaths
+             , c('SheetNum', 'Country', 'Country Report Date')
+             , suffix = c(".cases", ".deaths"))
+glimpse(ebola.option3)
+
+
+# Summarization -----------------------------------------------------------
+
+summarize( ebola.option3
+         , 'Observations' = n()
+         , 'Number of countries' = n_distinct(Country)
+         , "# of Reporting dates" = n_distinct(`Country Report Date`)
+         , max.cases = max(All.cases, na.rm=TRUE)
+         , max.deaths = max(All.deaths, na.rm=TRUE)
+         )
+summarize( ebola.option3 %>% group_by(Country)
+         , 'Observations' = n()
+         , 'Number of countries' = n_distinct(Country)
+         , "# of Reporting dates" = n_distinct(`Country Report Date`)
+         , max.cases = max(All.cases, na.rm=TRUE)
+         , max.deaths = max(All.deaths, na.rm=TRUE)
+         )
+summarize( ebola.option3 %>% group_by(Country,Year = lubridate::year(`Country Report Date`))
+         , 'Observations' = n()
+         , 'Number of countries' = n_distinct(Country)
+         , "# of Reporting dates" = n_distinct(`Country Report Date`)
+         , max.cases = max(All.cases, na.rm=TRUE)
+         , max.deaths = max(All.deaths, na.rm=TRUE)
+         )
+
+ebola.option3 %>% group_by(Country) %>%
+  summarise( "# of Reporting dates" = n_distinct(`Country Report Date`)
+           , max.cases = max(All.cases, na.rm=TRUE)
+           , max.deaths = max(All.deaths, na.rm=TRUE)
+           )
+
+
+
+# Plots -------------------------------------------------------------------
+
+ebola.plot1 <-
+ggplot(data=ebola.data) +               #< Our 'data' component
+    geom_point(                         #< a point geometry layer
+        aes( x = `Country Report Date`  #< our mappings
+           , y = `Total cases`
+           , col = Country
+           )
+      , stat = 'unique'                 #< our statistic
+      , position = 'identity'           #< how to position data
+    )
+ebola.plot1
+print(ebola.plot1)
+
+
+ggplot(data= (ebola.data)
+        #< Move mappings here because inheritance.
+      , aes( x = `Country Report Date`
+           , y = `Total cases`
+           , col = Country
+           , group = `Case def.`
+           )
+      ) +
+    geom_point()+
+    geom_line()
+
+ggplot(data= (ebola.data)
+        #< Move mappings here because inheritance.
+      , aes( x = `Country Report Date`
+           , y = `Total cases`
+           , col = Country
+           )
+      ) +
+    geom_point()+
+    geom_line()
+
+
+ggplot(data= ebola.data %>% select(2:4, 6) %>% distinct()
+        #< Move mappings here because inheritance.
+      , aes( x = `Country Report Date`
+           , y = `Total cases`
+           , col = Country
+           )
+      ) +
+    geom_point( stat = 'unique'
+              , size = 1         #< An explicit aesthetic.
+              ) +
+    geom_smooth(method='gam', formula=y ~ s(x, bs = "cs")) +   #< new 'smooth' layer
+    facet_wrap(~`Case def.`, 4, 1)  #< new 2x2 faceting for Case def.
+
+
+
+ggplot(data=ebola.data, aes(x = `Case def.`, y = `Total deaths`)) +
+    geom_boxplot()
+
+
+

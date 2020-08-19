@@ -439,7 +439,7 @@ Let's build something interesting.
 
 ![](images/Legos.gif)
 
-))
+
 ## World Bank Data
 
 The `wbstats` package provides access to the world bank database.
