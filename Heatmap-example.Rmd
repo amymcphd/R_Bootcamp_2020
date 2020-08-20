@@ -1,0 +1,52 @@
+---
+title: "Heatmap Example"
+output:
+  html_document:
+    df_print: paged
+---
+
+# Setup
+Load needed package.
+
+```{r setup}
+library(tidyverse)
+library(ggplot2)
+library(viridis)
+```
+
+
+# Setup data for use with ggplot
+
+Volcano data comes as a matrix, that is a numeric vector with rows and columns, not a data frame.
+ggplot2 only works with data frames so we will need to make it a data frame that we can use.
+
+
+```{r}
+data(volcano)
+volcano.data <- tibble( topo = as.vector(volcano)
+                      , row = rep(1:nrow(volcano), ncol(volcano))
+                      , col = rep(1:ncol(volcano), each=nrow(volcano))
+                      )
+```
+
+### pure heatmap
+```{r}
+ggplot(data=volcano.data, aes(x=col, y=row, z=topo, fill=topo)) + 
+    geom_tile() + scale_fill_viridis_c(option='A')
+```
+
+# Heatmap with contours
+
+```{r}
+ggplot(data=volcano.data, aes(x=col, y=row, z=topo, fill=topo)) + 
+    geom_tile() + scale_fill_viridis_c() +
+    geom_contour()
+```
+
+# Filled contours
+
+```{r}
+ggplot(data=volcano.data, aes(x=col, y=row, z=topo)) + 
+    geom_contour_filled()
+```
+    

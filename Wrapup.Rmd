@@ -1,0 +1,71 @@
+---
+title: "Wrapup"
+author: "Andrew Redd, PhD."
+date: "R Bootcamp 2020"
+output: 
+    ioslides_presentation:
+        logo: "images/U_Health_stacked_png_red.png"
+        theme: "paper"
+        css: "style.css"
+        keep_md: FALSE
+        md_extensions: 
+            - "+task_lists"
+            - "+multiline_tables"
+        includes:
+            in_header: timer.htm
+        standalone: TRUE
+        widescreen: TRUE
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+library(printr)
+library(tidyverse)
+library(magrittr)
+knitr::opts_chunk$set(echo = TRUE, error=TRUE
+                     , class.error='error'
+                     , class.warning='warning'
+                     , class.message='message'
+                     , cache=FALSE)
+options( repos="https://cran.rstudio.org"
+       , width=60
+       )
+```
+
+
+# Bringing it Together
+
+## Reproducible Research
+
+> "... the original data (and original computer code) 
+> can be analyzed (by an independent investigator) 
+> to obtain the same results of the original study.
+> In essence, it is the notion that the 
+> _data analysis can be successfully repeated._"
+>  - Roger Peng
+
+## R Markdown
+
+R Markdown allows for mixing code & results into documents to create a 
+reproducible analyses, reports and presentations.
+
+https://rmarkdown.rstudio.com/
+
+## What I Hope you learned {.build}
+
+* Know where to find help.
+
+<!---->
+
+* Think in R, use the building blocks you have learned.
+
+<!---->
+
+* A desire to learn more R.
+
+## Join the Salt Lake City R Users Group
+
+:::{.center}
+https://www.meetup.com/slc-rug
+:::
+

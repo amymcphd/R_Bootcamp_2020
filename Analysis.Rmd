@@ -1,0 +1,242 @@
+---
+title: "Analysis"
+author: "Andrew Redd, PhD."
+date: "R Bootcamp 2020"
+output: 
+    ioslides_presentation:
+        logo: "images/U_Health_stacked_png_red.png"
+        theme: "paper"
+        css: "style.css"
+        keep_md: FALSE
+        md_extensions: 
+            - "+task_lists"
+            - "+multiline_tables"
+        includes:
+            in_header: timer.htm
+        standalone: TRUE
+        widescreen: TRUE
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+library(printr)
+library(tidyverse)
+library(magrittr)
+knitr::opts_chunk$set(echo = TRUE, error=TRUE
+                     , class.error='error'
+                     , class.warning='warning'
+                     , class.message='message'
+                     , cache=FALSE)
+options( repos="https://cran.rstudio.org"
+       , width=60
+       )
+```
+
+# Hypothesis Tests
+
+## T-test
+
+### Something Ridiculous
+```{r include=FALSE}
+load(file="data/our.data.RData")
+data <- 
+    our.data %>%
+        filter(SheetName == "Jan 06, 2016") %>% 
+        mutate( in.Africa = ifelse( iso3c %in% c('ESP', 'GBR', 'USA', 'ITA')
+                                  , 'Other', 'Africa')
+              )
+```
+
+Test for the difference in GDP Per capita.
+```{r}
+# using the restriocted data from the exercise
+(gdp.test <- t.test(NY.GDP.PCAP.CD~in.Africa, data=data))
+```
+
+-----
+:::{.terminology}
+Formulas, created with a `~`, represent relationships. They can 
+
+* be one sided `~x`
+    - Lambda functions `~log(.+1)`
+* or two sided `y ~ x + z`
+    - specify relationships or models
+* often include functions
+    - `y ~ x + log(z)`
+    - `y ~ x + poly(z,3)`, a polynomial fit of degree 3 on `z`
+* have special syntax
+    - interaction `y ~ x:z`
+    - crossing `y ~ a*b` is equal to `y ~ a + b + a:b`
+    - nesting `y ~ a + b %in% a` or equivalently `y~a/b`
+:::
+
+## Getting usable results from a model {.build}
+
+The `gdp.test` object is a `r class(gdp.test)` object, 
+which prints nicely but what if we want to include this in our table 1?
+
+Try these:
+```r
+str(gdp.test) # get the underlying structure of the object.
+glimpse(gdp.test) # alternative to str that handles some objects better. 
+gdp.test$p.value
+getElement(gdp.test, 'p.value')
+gdp.test[['p.value']]
+```
+
+## Exercise: Proportion Test
+
+Use `prop.test` to test for the difference in proportions of males for all countries.
+
+:::{#timer3 .timer onclick="startTimer()" warnafter=30}
+5:00
+:::
+
+
+## Solution
+
+
+```{r}
+suppressMessages(library(magrittr))
+data %>% 
+    mutate(N.males = round(SP.POP.TOTL*SP.POP.TOTL.MA.ZS/100)) %$%
+    prop.test(N.males, SP.POP.TOTL)
+```
+
+## Solution, what I did
+
+```r
+suppressMessages(library(magrittr)) #< To ignore unimportant message.
+data %>% 
+    mutate(N.males = round(SP.POP.TOTL*SP.POP.TOTL.MA.ZS/100)) %$%
+    prop.test(N.males, SP.POP.TOTL)
+```
+
+0. Load magrittr to get the accessor pipe `%$%`.
+1. `mutate(N.male = ...)`, get counts of males, because prop.test expects counts.
+2. used `%$%` the Accessor pipe to make the variables directly accessible to the next command
+3. used `prop.test` to perform the test.
+
+## Alternate Version
+
+Passing in a matrix with 'successes' and 'failures':
+```{r}
+data %>% 
+    # get our 'successes' and 'failures'
+    transmute( males = round(SP.POP.TOTL*SP.POP.TOTL.MA.ZS/100)
+             , females = SP.POP.TOTL-males
+             ) %>%
+    # convert to a matrix
+    as.matrix() %>% 
+    prop.test()
+```
+
+
+# Linear Models
+
+## Bordeaux Wine Data
+```{r}
+wine <- read.csv("data/Bordeaux.csv")
+```
+
+### Variables
+* `Wine` - the name of the wine.
+* `Price` - The price of the wine in pounds sterling(&pound;)
+* `ParkerPoints` - the rating out of 100 given by [Robert Parker](https://www.robertparker.com/).
+* `CoatesPoints` - the rating out of 20 given by [Clive Coates](http://www.clive-coates.com/)
+* `P95andAbove` - a dummy variable, 1 if `ParkerPoints>=95`
+* `FirstGrowth` - inditcator of if the wine is a [first growth](https://en.wikipedia.org/wiki/First_Growth)
+* `CultWine` - indicator of if the wine is a [cult wine](https://en.wikipedia.org/wiki/Cult_wine)
+* `Pomerol` - indicator for if the wine is from [Pomerol](https://en.wikipedia.org/wiki/Pomerol), France
+* `VintageSuperstar` - indicator if the wine is a superstar
+
+
+## Wine Model
+
+We will rely on the normal approximation for proportions.
+
+```{r}
+model <- lm( Price ~ . - Wine - P95andAbove, data=wine)
+model
+```
+Not really useful.
+
+## Wine Model
+
+We will rely on the normal approximation for proportions.
+
+```r
+model <- lm( Price ~ . - Wine - P95andAbove, data=wine)
+model
+```
+::: {.concept}
+
+Fomula Subtraction
+
+: `Price ~ . - Wine - P95andAbove` should be read as
+
+    > "Model Price by all variables **except** Wine and P95andAbove."
+
+:::
+
+## Summarizing Models
+
+```{r}
+(model.summary <- summary(model))
+```
+
+## Exercise: Try the following
+
+:::::: {.columns-2}
+:::{.column}
+#### Extracting Parts of the model
+
+```r
+coef(model)
+coef(summary(model))
+deviance(model)
+formula(model)
+residuals(model)
+```
+:::
+:::{.column}
+#### Operations on models
+
+```r
+summary(model)
+plot(model)
+predict(model)
+vcov(model)
+anova(model)
+aov(model)
+```
+:::
+::::::
+
+:::{#modelstimer .timer onclick="startTimer()" warnafter=30}
+5:00
+:::
+
+## Residual plots
+
+```{r h=4,w=6}
+plot(model, 1) #< Residuals vs. Fitted  | Goodness of fit
+```
+
+## Residual plots
+
+```{r}
+plot(model, 2) #< Normal Q-Q            | Appropriate error model 
+```
+
+## Residual plots
+
+```{r}
+plot(model, 3) #< Scale-Location        | Homoscedasticity
+```
+
+## Residual plots
+
+```{r}
+plot(model, 5) #< Residual vs. Leverage | Influential points
+```

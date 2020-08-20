@@ -89,7 +89,7 @@ All are time permitting and we may not get to some of the later ones.
 11. [Graphics](Graphics.html)
     * Base Graphics
     * Grammar Based, `ggplot2`
-12. Analyses & Hypothesis Testing
+12. [Analyses & Hypothesis Testing](Analysis.html)
     * T-test, Chi-squared, & Fisher
     * Linear Regression
         + Diagnostics
@@ -106,6 +106,6 @@ The day's will be themed along the lines of:
 
 * Day 1: Introduction to R and Rstudio
 * Day 2: Data and data structures
-* Day 3: Data Vizualization
+* Day 3: Data Visualization
 * Day 4: Regression and Analyses
 * Day 5: Round-up and special topics.

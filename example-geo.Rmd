@@ -1,0 +1,65 @@
+---
+title: "Geospatial example"
+author: "Andrew Redd"
+date: "8/20/2020"
+output: html_document
+---
+
+# Packages
+
+You will have to install:
+
+* `rnaturalearth`
+* `rnaturalearthdata`
+* `rgeos`
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(ggplot2)
+library(viridis)
+library(rnaturalearth)
+requireNamespace('rgeos')
+```
+
+# Data
+
+Load our data with world bank features.
+
+```{r}
+load("data/our.data.RData")
+```
+
+Get world data geo-features from `rnatualworld::ne_countries`
+
+```{r}
+world <- ne_countries(scale = "medium", returnclass = "sf")
+class(world)
+glimpse(world)
+```
+ Join the data together and convert to a `sf` which is geometric simle features data frame.
+
+```{r}
+plot.data <- inner_join(our.data, world, c('iso3c'='iso_a3')) %>% sf::st_sf()
+```
+
+# Plotting
+
+We use `geom_sf` to create a geo-spatial layer.  Here we create a base layer.
+
+```{r}
+ggplot() + geom_sf(data=world)
+```
+
+Then add our data layer with fill set to `All.cases` and use the continuous viridis scale for visibility.
+
+```{r}
+ggplot() + geom_sf(data=world) + geom_sf(aes(fill=All.cases), data = plot.data) +
+    scale_fill_viridis_c()
+```
+ Let's limit the view to just Africa and log transform the scale.
+```{r}
+ggplot() + 
+    geom_sf(data = world %>% filter(continent == 'Africa')) +
+    geom_sf(aes(fill=All.cases), data = plot.data %>% filter(continent == 'Africa')) +
+    scale_fill_viridis_c(trans = 'log10')
+```

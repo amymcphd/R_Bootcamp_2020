@@ -21,6 +21,10 @@ This webpage will be your guide to this course. Please Start by reading the
 * [Getting Data](GettingData.html)[![](images/pdf.png)](pdf/GettingData.pdf)
 * [Data Wrangling](DataWrangling.html) [![](images/pdf.png)](pdf/DataWrangling.pdf)
 * [Graphics](Graphics.html) [![](images/pdf.png)](pdf/Graphics.pdf)
+    + [Heatmap example](Heatmap-example.nb.html)
+    + [Geo-spatial example](example-geo.nb.html)
+* [Analysis](Analysis.html) [![](images/pdf.png)](pdf/Analysis.pdf)
+* [Wrapup](Wrapup.html) [![](images/pdf.png)](pdf/Wrapup.pdf)
 
 ## Data
 
@@ -28,6 +32,7 @@ This webpage will be your guide to this course. Please Start by reading the
     + [Source](https://data.humdata.org/dataset/ebola-cases-2014) - The Humanitarian Data Exchange       
     + [Data](https://github.com/halpo/R_Bootcamp_2020/raw/master/data/ebola-cases-and-deaths-who-gar-sitrep.xlsx)
     + [Script](https://github.com/halpo/R_Bootcamp_2020/tree/master/reading_ebola_data.R)
+    + With world bank data -- [download](https://github.com/halpo/R_Bootcamp_2020/raw/master/data/our.data.RData)
 * Bordeaux Wine Data
     + [Source](https://link.springer.com/book/10.1007/978-0-387-09608-7) - 
         Sheather, Simon. *A modern approach to regression with R.* Springer Science & Business Media, 2009.
