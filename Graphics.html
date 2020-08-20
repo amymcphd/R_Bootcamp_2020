@@ -496,25 +496,12 @@ qplot(`Total cases`, `Total deaths`, color = Country, data=plotting.data)</pre>
 </ol></li>
 </ol>
 
-<div class="timer" onclick="startTimer()" warnafter="120" id="timer-plots">
+<div onclick="startTimer()" id="timer-plots" class="timer" warnafter="120">
 <p>10:00</p></div>
 
 </article></slide><slide class=""><hgroup><h2>Solution: Preliminary</h2></hgroup><article  id="solution-preliminary">
 
 <p>Fix the wine data so that the labels for indicators are a little nicer.</p>
-
-<pre class = 'prettyprint lang-r'>library(magrittr)</pre>
-
-<pre class = 'prettyprint lang-message'>## 
-## Attaching package: &#39;magrittr&#39;</pre>
-
-<pre class = 'prettyprint lang-message'>## The following object is masked from &#39;package:purrr&#39;:
-## 
-##     set_names</pre>
-
-<pre class = 'prettyprint lang-message'>## The following object is masked from &#39;package:tidyr&#39;:
-## 
-##     extract</pre>
 
 <pre class = 'prettyprint lang-r'>#assign back pipe
 wine &lt;- read.csv(&quot;data/Bordeaux.csv&quot;) %&gt;% 
