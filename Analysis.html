@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Analysis</title>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="generator" content="pandoc" />
+
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+
+  <base target="_blank">
+
+  <script type="text/javascript">
+    var SLIDE_CONFIG = {
+      // Slide settings
+      settings: {
+                title: 'Analysis',
+                        useBuilds: true,
+        usePrettify: true,
+        enableSlideAreas: true,
+        enableTouch: true,
+                        favIcon: 'Analysis_files/logo.png',
+              },
+
+      // Author information
+      presenters: [
+            {
+        name:  'Andrew Redd, PhD.' ,
+        company: '',
+        gplus: '',
+        twitter: '',
+        www: '',
+        github: ''
+      },
+            ]
+    };
+  </script>
+
+  <script type='text/javascript' id='timer-js'>
+  var counts = {};
+  var timers = {};
+  var initial = {};
+  function startTimer() {
+  	//var count = initial;
+  	var trigger = event.target;
+  	var div = trigger.parentNode;
+  	console.log("startTimer triggered by click on " + div.nodeName + "#" + div.id + ">" + trigger.nodeName);
+  	var eid = div.id;
+  	var warning = (div.hasAttribute("warnafter")) ? (+div.getAttribute("warnafter")) : 0;
+  	console.log("eid=" + eid + ", warning=" + warning);
+      if (!(eid in initial)){
+          var p = trigger;
+  
+          var init = trigger.innerHTML;
+          console.log("init=" + init);
+  
+          var a = init.split(':');
+          initial[eid] = (+a[0])*60 + (+a[1]);
+          console.log("initial[eid]=", initial[eid]);
+      }
+      counts[eid] = initial[eid];
+      if (eid in timers && timers[eid] != 0) {
+          clearInterval(timers[eid]); timers[eid] = 0;
+          var minutes = Math.floor((initial[eid] % (60 * 60)) / (60));
+          var seconds = Math.floor((initial[eid] % (60)));
+          document.getElementById(eid).innerHTML = hms(initial[eid]);
+      } else {
+          timers[eid] = setInterval(function() {
+              // Time calculations for days, hours, minutes and seconds
+              var count = counts[eid] - 1;
+              if (count > 0) {
+                  document.getElementById(eid).innerHTML = hms(count, count <= warning);
+              } else {
+                  document.getElementById(eid).innerHTML = "<p class='timesup'>0:00</p>";
+                  clearInterval(timers[eid]);
+                  timers[eid] = 0;
+              }
+              counts[eid] = count;
+          }, 1000);
+      }
+  };
+  function hms(count, warn) {
+      var leading = ''
+      var minutes = Math.floor((count % (60 * 60)) / (60));
+      var seconds = Math.floor((count % (60)));
+      if (seconds <= 9){
+          leading = "0";
+      }
+      var start;
+      if (warn) {
+          start = "<p class='warning'>";
+      } else {
+          start = "<p>";
+      }
+      return start + minutes + ":" + leading +  seconds + "</p>";
+  };
+  </script>
+  <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="site_libs/bootstrap-3.3.5/css/paper.min.css" rel="stylesheet" />
+  <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+  <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+  <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+  <link href="site_libs/ioslides-13.5.1/fonts/fonts.css" rel="stylesheet" />
+  <link href="site_libs/ioslides-13.5.1/theme/css/default.css" rel="stylesheet" />
+  <link href="site_libs/ioslides-13.5.1/theme/css/phone.css" rel="stylesheet" />
+  <script src="site_libs/ioslides-13.5.1/js/modernizr.custom.45394.js"></script>
+  <script src="site_libs/ioslides-13.5.1/js/prettify/prettify.js"></script>
+  <script src="site_libs/ioslides-13.5.1/js/prettify/lang-r.js"></script>
+  <script src="site_libs/ioslides-13.5.1/js/prettify/lang-yaml.js"></script>
+  <script src="site_libs/ioslides-13.5.1/js/hammer.js"></script>
+  <script src="site_libs/ioslides-13.5.1/js/slide-controller.js"></script>
+  <script src="site_libs/ioslides-13.5.1/js/slide-deck.js"></script>
+
+  <style type="text/css">
+
+    b, strong {
+      font-weight: bold;
+    }
+
+    em {
+      font-style: italic;
+    }
+
+    summary {
+      display: list-item;
+    }
+
+    slides > slide {
+      -webkit-transition: all 0.4s ease-in-out;
+      -moz-transition: all 0.4s ease-in-out;
+      -o-transition: all 0.4s ease-in-out;
+      transition: all 0.4s ease-in-out;
+    }
+
+    .auto-fadein {
+      -webkit-transition: opacity 0.6s ease-in;
+      -webkit-transition-delay: 0.4s;
+      -moz-transition: opacity 0.6s ease-in 0.4s;
+      -o-transition: opacity 0.6s ease-in 0.4s;
+      transition: opacity 0.6s ease-in 0.4s;
+      opacity: 0;
+    }
+/* https://github.com/ropensci/plotly/pull/524#issuecomment-468142578 */
+slide:not(.current) .plotly.html-widget{
+  display: block;
+}
+
+    slides > slide:not(.nobackground):before {
+      font-size: 12pt;
+      content: "";
+      position: absolute;
+      bottom: 20px;
+      left: 60px;
+      background: url(Analysis_files/logo.png) no-repeat 0 50%;
+      -webkit-background-size: 30px 30px;
+      -moz-background-size: 30px 30px;
+      -o-background-size: 30px 30px;
+      background-size: 30px 30px;
+      padding-left: 40px;
+      height: 30px;
+      line-height: 1.9;
+    }
+  </style>
+
+  <link rel="stylesheet" href="style.css" type="text/css" />
+
+</head>
+
+<body style="opacity: 0">
+
+<slides class="layout-widescreen">
+
+  <slide class="title-slide segue nobackground">
+        <aside class="gdbar"><img src="Analysis_files/logo.png"></aside>
+        <!-- The content of this hgroup is replaced programmatically through the slide_config.json. -->
+    <hgroup class="auto-fadein">
+      <h1 data-config-title><!-- populated from slide_config.json --></h1>
+      
+      <p data-config-presenter><!-- populated from slide_config.json --></p>
+            <p style="margin-top: 6px; margin-left: -2px;">R Bootcamp 2020</p>
+          </hgroup>
+  </slide>
+
+<slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Hypothesis Tests</h2></hgroup><article  id="hypothesis-tests">
+
+</article></slide><slide class=""><hgroup><h2>T-test</h2></hgroup><article  id="t-test">
+
+<h3>Something Ridiculous</h3>
+
+<p>Test for the difference in GDP Per capita.</p>
+
+<pre class = 'prettyprint lang-r'># using the restriocted data from the exercise
+(gdp.test &lt;- t.test(NY.GDP.PCAP.CD~in.Africa, data=data))</pre>
+
+<pre >## 
+##  Welch Two Sample t-test
+## 
+## data:  NY.GDP.PCAP.CD by in.Africa
+## t = -7.0402, df = 3.022, p-value = 0.005749
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -58966.64 -22356.59
+## sample estimates:
+## mean in group Africa  mean in group Other 
+##             1201.708            41863.325</pre>
+
+</article></slide><slide class=""><hgroup><h2></h2></hgroup><article >
+
+<div class="terminology">
+<p>Formulas, created with a <code>~</code>, represent relationships. They can</p>
+
+<ul>
+<li>be one sided <code>~x</code>
+
+<ul>
+<li>Lambda functions <code>~log(.+1)</code></li>
+</ul></li>
+<li>or two sided <code>y ~ x + z</code>
+
+<ul>
+<li>specify relationships or models</li>
+</ul></li>
+<li>often include functions
+
+<ul>
+<li><code>y ~ x + log(z)</code></li>
+<li><code>y ~ x + poly(z,3)</code>, a polynomial fit of degree 3 on <code>z</code></li>
+</ul></li>
+<li>have special syntax
+
+<ul>
+<li>interaction <code>y ~ x:z</code></li>
+<li>crossing <code>y ~ a*b</code> is equal to <code>y ~ a + b + a:b</code></li>
+<li>nesting <code>y ~ a + b %in% a</code> or equivalently <code>y~a/b</code></li>
+</ul></li>
+</ul></div>
+
+</article></slide><slide class=""><hgroup><h2>Getting usable results from a model</h2></hgroup><article  id="getting-usable-results-from-a-model" class="build">
+
+<p>The <code>gdp.test</code> object is a htest object, which prints nicely but what if we want to include this in our table 1?</p>
+
+<p>Try these:</p>
+
+<pre class = 'prettyprint lang-r'>str(gdp.test) # get the underlying structure of the object.
+glimpse(gdp.test) # alternative to str that handles some objects better. 
+gdp.test$p.value
+getElement(gdp.test, &#39;p.value&#39;)
+gdp.test[[&#39;p.value&#39;]]</pre>
+
+</article></slide><slide class=""><hgroup><h2>Exercise: Proportion Test</h2></hgroup><article  id="exercise-proportion-test">
+
+<p>Use <code>prop.test</code> to test for the difference in proportions of males for all countries.</p>
+
+<div id="timer3" class="timer" onclick="startTimer()" warnafter="30">
+<p>5:00</p></div>
+
+</article></slide><slide class=""><hgroup><h2>Solution</h2></hgroup><article  id="solution">
+
+<pre class = 'prettyprint lang-r'>suppressMessages(library(magrittr))
+data %&gt;% 
+    mutate(N.males = round(SP.POP.TOTL*SP.POP.TOTL.MA.ZS/100)) %$%
+    prop.test(N.males, SP.POP.TOTL)</pre>
+
+<pre >## 
+##  11-sample test for equality of proportions without
+##  continuity correction
+## 
+## data:  N.males out of SP.POP.TOTL
+## X-squared = 135837, df = 10, p-value &lt; 2.2e-16
+## alternative hypothesis: two.sided
+## sample estimates:
+##    prop 1    prop 2    prop 3    prop 4    prop 5    prop 6 
+## 0.4781971 0.4848457 0.5014707 0.5014707 0.4999245 0.5062502 
+##    prop 7    prop 8    prop 9   prop 10   prop 11 
+## 0.4862119 0.4981671 0.4915102 0.4925855 0.4944933</pre>
+
+</article></slide><slide class=""><hgroup><h2>Solution, what I did</h2></hgroup><article  id="solution-what-i-did">
+
+<pre class = 'prettyprint lang-r'>suppressMessages(library(magrittr)) #&lt; To ignore unimportant message.
+data %&gt;% 
+    mutate(N.males = round(SP.POP.TOTL*SP.POP.TOTL.MA.ZS/100)) %$%
+    prop.test(N.males, SP.POP.TOTL)</pre>
+
+<ol>
+<li>Load magrittr to get the accessor pipe <code>%$%</code>.</li>
+<li><code>mutate(N.male = ...)</code>, get counts of males, because prop.test expects counts.</li>
+<li>used <code>%$%</code> the Accessor pipe to make the variables directly accessible to the next command</li>
+<li>used <code>prop.test</code> to perform the test.</li>
+</ol>
+
+</article></slide><slide class=""><hgroup><h2>Alternate Version</h2></hgroup><article  id="alternate-version">
+
+<p>Passing in a matrix with &lsquo;successes&rsquo; and &lsquo;failures&rsquo;:</p>
+
+<pre class = 'prettyprint lang-r'>data %&gt;% 
+    # get our &#39;successes&#39; and &#39;failures&#39;
+    transmute( males = round(SP.POP.TOTL*SP.POP.TOTL.MA.ZS/100)
+             , females = SP.POP.TOTL-males
+             ) %&gt;%
+    # convert to a matrix
+    as.matrix() %&gt;% 
+    prop.test()</pre>
+
+<pre >## 
+##  11-sample test for equality of proportions without
+##  continuity correction
+## 
+## data:  .
+## X-squared = 135837, df = 10, p-value &lt; 2.2e-16
+## alternative hypothesis: two.sided
+## sample estimates:
+##    prop 1    prop 2    prop 3    prop 4    prop 5    prop 6 
+## 0.4781971 0.4848457 0.5014707 0.5014707 0.4999245 0.5062502 
+##    prop 7    prop 8    prop 9   prop 10   prop 11 
+## 0.4862119 0.4981671 0.4915102 0.4925855 0.4944933</pre>
+
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Linear Models</h2></hgroup><article  id="linear-models">
+
+</article></slide><slide class=""><hgroup><h2>Bordeaux Wine Data</h2></hgroup><article  id="bordeaux-wine-data">
+
+<pre class = 'prettyprint lang-r'>wine &lt;- read.csv(&quot;data/Bordeaux.csv&quot;)</pre>
+
+<h3>Variables</h3>
+
+<ul>
+<li><code>Wine</code> - the name of the wine.</li>
+<li><code>Price</code> - The price of the wine in pounds sterling(£)</li>
+<li><code>ParkerPoints</code> - the rating out of 100 given by <a href='https://www.robertparker.com/' title=''>Robert Parker</a>.</li>
+<li><code>CoatesPoints</code> - the rating out of 20 given by <a href='http://www.clive-coates.com/' title=''>Clive Coates</a></li>
+<li><code>P95andAbove</code> - a dummy variable, 1 if <code>ParkerPoints&gt;=95</code></li>
+<li><code>FirstGrowth</code> - inditcator of if the wine is a <a href='https://en.wikipedia.org/wiki/First_Growth' title=''>first growth</a></li>
+<li><code>CultWine</code> - indicator of if the wine is a <a href='https://en.wikipedia.org/wiki/Cult_wine' title=''>cult wine</a></li>
+<li><code>Pomerol</code> - indicator for if the wine is from <a href='https://en.wikipedia.org/wiki/Pomerol' title=''>Pomerol</a>, France</li>
+<li><code>VintageSuperstar</code> - indicator if the wine is a superstar</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Wine Model</h2></hgroup><article  id="wine-model">
+
+<p>We will rely on the normal approximation for proportions.</p>
+
+<pre class = 'prettyprint lang-r'>model &lt;- lm( Price ~ . - Wine - P95andAbove, data=wine)
+model</pre>
+
+<pre >## 
+## Call:
+## lm(formula = Price ~ . - Wine - P95andAbove, data = wine)
+## 
+## Coefficients:
+##      (Intercept)      ParkerPoints      CoatesPoints  
+##         -7390.78             61.94            116.27  
+##      FirstGrowth          CultWine           Pomerol  
+##          2001.41           4583.54            739.16  
+## VintageSuperstar  
+##          1424.58</pre>
+
+<p>Not really useful.</p>
+
+</article></slide><slide class=""><hgroup><h2>Wine Model</h2></hgroup><article  id="wine-model-1">
+
+<p>We will rely on the normal approximation for proportions.</p>
+
+<pre class = 'prettyprint lang-r'>model &lt;- lm( Price ~ . - Wine - P95andAbove, data=wine)
+model</pre>
+
+<div class="concept">
+<dl>
+<dt>Fomula Subtraction</dt>
+<dd><p><code>Price ~ . - Wine - P95andAbove</code> should be read as</p>
+
+<blockquote>
+<p>&ldquo;Model Price by all variables <strong>except</strong> Wine and P95andAbove.&rdquo;</p>
+</blockquote></dd>
+</dl></div>
+
+</article></slide><slide class=""><hgroup><h2>Summarizing Models</h2></hgroup><article  id="summarizing-models">
+
+<pre class = 'prettyprint lang-r'>(model.summary &lt;- summary(model))</pre>
+
+<pre >## 
+## Call:
+## lm(formula = Price ~ . - Wine - P95andAbove, data = wine)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -3251.2  -102.5    40.5   167.2  4463.7 
+## 
+## Coefficients:
+##                  Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)      -7390.78    3766.82  -1.962   0.0540 .  
+## ParkerPoints        61.94      44.84   1.381   0.1719    
+## CoatesPoints       116.27     119.14   0.976   0.3327    
+## FirstGrowth       2001.41     410.38   4.877 7.28e-06 ***
+## CultWine          4583.54     470.80   9.736 2.56e-14 ***
+## Pomerol            739.16     305.71   2.418   0.0184 *  
+## VintageSuperstar  1424.58     715.89   1.990   0.0508 .  
+## ---
+## Signif. codes:  
+## 0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 941.3 on 65 degrees of freedom
+## Multiple R-squared:  0.7716, Adjusted R-squared:  0.7506 
+## F-statistic: 36.61 on 6 and 65 DF,  p-value: &lt; 2.2e-16</pre>
+
+</article></slide><slide class=""><hgroup><h2>Exercise: Try the following</h2></hgroup><article  id="exercise-try-the-following">
+
+<div class="columns-2">
+<div class="column">
+<h4>Extracting Parts of the model</h4>
+
+<pre class = 'prettyprint lang-r'>coef(model)
+coef(summary(model))
+deviance(model)
+formula(model)
+residuals(model)</pre></div>
+
+<div class="column">
+<h4>Operations on models</h4>
+
+<pre class = 'prettyprint lang-r'>summary(model)
+plot(model)
+predict(model)
+vcov(model)
+anova(model)
+aov(model)</pre></div></div>
+
+<div id="modelstimer" class="timer" onclick="startTimer()" warnafter="30">
+<p>5:00</p></div>
+
+</article></slide><slide class=""><hgroup><h2>Residual plots</h2></hgroup><article  id="residual-plots">
+
+<pre class = 'prettyprint lang-r'>plot(model, 1) #&lt; Residuals vs. Fitted  | Goodness of fit</pre>
+
+<p><img src="Analysis_files/figure-html/unnamed-chunk-8-1.png" width="720" /></p>
+
+</article></slide><slide class=""><hgroup><h2>Residual plots</h2></hgroup><article  id="residual-plots-1">
+
+<pre class = 'prettyprint lang-r'>plot(model, 2) #&lt; Normal Q-Q            | Appropriate error model </pre>
+
+<p><img src="Analysis_files/figure-html/unnamed-chunk-9-1.png" width="720" /></p>
+
+</article></slide><slide class=""><hgroup><h2>Residual plots</h2></hgroup><article  id="residual-plots-2">
+
+<pre class = 'prettyprint lang-r'>plot(model, 3) #&lt; Scale-Location        | Homoscedasticity</pre>
+
+<p><img src="Analysis_files/figure-html/unnamed-chunk-10-1.png" width="720" /></p>
+
+</article></slide><slide class=""><hgroup><h2>Residual plots</h2></hgroup><article  id="residual-plots-3">
+
+<pre class = 'prettyprint lang-r'>plot(model, 5) #&lt; Residual vs. Leverage | Influential points</pre>
+
+<p><img src="Analysis_files/figure-html/unnamed-chunk-11-1.png" width="720" /></p></article></slide>
+
+
+  <slide class="backdrop"></slide>
+
+</slides>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+<!-- map slide visiblity events into shiny -->
+<script>
+  (function() {
+    if (window.jQuery) {
+       window.jQuery(document).on('slideleave', function(e) {
+         window.jQuery(e.target).trigger('hidden');
+      });
+       window.jQuery(document).on('slideenter', function(e) {
+         window.jQuery(e.target).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+</body>
+</html>
