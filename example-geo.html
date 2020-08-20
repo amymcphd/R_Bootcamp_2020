@@ -305,13 +305,20 @@ $(document).ready(function () {
 <li><code>rnaturalearthdata</code></li>
 <li><code>rgeos</code></li>
 </ul>
+<pre class="r"><code>library(tidyverse)
+library(ggplot2)
+library(viridis)</code></pre>
+<pre><code>## Loading required package: viridisLite</code></pre>
+<pre class="r"><code>library(rnaturalearth)
+requireNamespace(&#39;rgeos&#39;)</code></pre>
+<pre><code>## Loading required namespace: rgeos</code></pre>
 </div>
 <div id="data" class="section level1">
 <h1>Data</h1>
 <p>Load our data with world bank features.</p>
 <pre class="r"><code>load(&quot;data/our.data.RData&quot;)</code></pre>
 <p>Get world data geo-features from <code>rnatualworld::ne_countries</code></p>
-<pre class="r"><code>world &lt;- ne_countries(scale = &quot;medium&quot;, returnclass = &quot;sf&quot;)
+<pre class="r"><code>world &lt;- rnaturalearth::ne_countries(scale = &quot;medium&quot;, returnclass = &quot;sf&quot;)
 class(world)</code></pre>
 <pre><code>## [1] &quot;sf&quot;         &quot;data.frame&quot;</code></pre>
 <pre class="r"><code>glimpse(world)</code></pre>
@@ -395,7 +402,12 @@ class(world)</code></pre>
 <p><img src="example-geo_files/figure-html/unnamed-chunk-5-1.png" width="672" /> Let’s limit the view to just Africa and log transform the scale.</p>
 <pre class="r"><code>ggplot() + 
     geom_sf(data = world %&gt;% filter(continent == &#39;Africa&#39;)) +
-    geom_sf(aes(fill=All.cases), data = plot.data %&gt;% filter(continent == &#39;Africa&#39;)) +
+    geom_sf(aes(fill=All.cases, geometry = geometry), 
+            data = plot.data %&gt;%
+                    filter(continent == &#39;Africa&#39;) %&gt;% 
+                    group_by(Country) %&gt;% 
+                    group_modify(~filter(.x, `Country Report Date` == max(`Country Report Date`)))
+                , stat=&quot;unique&quot;) +
     scale_fill_viridis_c(trans = &#39;log10&#39;)</code></pre>
 <p><img src="example-geo_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 </div>
