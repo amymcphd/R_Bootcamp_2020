@@ -22,6 +22,7 @@ library(knitr)
 library(printr)
 library(tidyverse)
 library(ggplot2)
+library(magrittr)
 knitr::opts_chunk$set(echo = TRUE, error=TRUE
                      , class.error='error'
                      , class.warning='warning'
@@ -363,7 +364,6 @@ Fix the wine data so that the labels for indicators are a little nicer.
 
 
 ```{r "fix_wine_data", dependson="wine.data"}
-library(magrittr)
 #assign back pipe
 wine <- read.csv("data/Bordeaux.csv") %>% 
         mutate_at( vars(FirstGrowth:VintageSuperstar)

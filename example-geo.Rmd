@@ -13,7 +13,7 @@ You will have to install:
 * `rnaturalearthdata`
 * `rgeos`
 
-```{r setup, include=FALSE}
+```{r setup}
 library(tidyverse)
 library(ggplot2)
 library(viridis)
@@ -32,7 +32,7 @@ load("data/our.data.RData")
 Get world data geo-features from `rnatualworld::ne_countries`
 
 ```{r}
-world <- ne_countries(scale = "medium", returnclass = "sf")
+world <- rnaturalearth::ne_countries(scale = "medium", returnclass = "sf")
 class(world)
 glimpse(world)
 ```
@@ -60,6 +60,11 @@ ggplot() + geom_sf(data=world) + geom_sf(aes(fill=All.cases), data = plot.data) 
 ```{r}
 ggplot() + 
     geom_sf(data = world %>% filter(continent == 'Africa')) +
-    geom_sf(aes(fill=All.cases), data = plot.data %>% filter(continent == 'Africa')) +
+    geom_sf(aes(fill=All.cases, geometry = geometry), 
+            data = plot.data %>%
+                    filter(continent == 'Africa') %>% 
+                    group_by(Country) %>% 
+                    group_modify(~filter(.x, `Country Report Date` == max(`Country Report Date`)))
+                , stat="unique") +
     scale_fill_viridis_c(trans = 'log10')
 ```

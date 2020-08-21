@@ -2,19 +2,19 @@
 title: "Analysis"
 author: "Andrew Redd, PhD."
 date: "R Bootcamp 2020"
-output: 
-    ioslides_presentation:
-        logo: "images/U_Health_stacked_png_red.png"
-        theme: "paper"
-        css: "style.css"
-        keep_md: FALSE
-        md_extensions: 
-            - "+task_lists"
-            - "+multiline_tables"
-        includes:
-            in_header: timer.htm
-        standalone: TRUE
-        widescreen: TRUE
+output:
+  ioslides_presentation:
+    logo: images/U_Health_stacked_png_red.png
+    theme: paper
+    css: style.css
+    keep_md: no
+    md_extensions:
+    - +task_lists
+    - +multiline_tables
+    includes:
+      in_header: timer.htm
+    standalone: yes
+    widescreen: yes
 ---
 
 ```{r setup, include=FALSE}

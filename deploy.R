@@ -1,3 +1,4 @@
+library(tidyverse)
 
 git <- function (..., echo_cmd = TRUE, echo = TRUE, error_on_status = TRUE) {
     invisible(
@@ -96,6 +97,10 @@ needs_render <- function(in.dir = '.', out.dir = '_site'){
         basename
 }
 
+update_site_files <- function(){
+    render <- needs_render()
+    map(render, rmarkdown::render, output_dir = '_site')
+}
 
 deploy <-
 function( dir = ".", render = NA
@@ -124,11 +129,10 @@ function( dir = ".", render = NA
     # write_lines(paste("output_dir:",shQuote(gsub("/", "\\\\\\\\", fs::path_norm(dest_dir)))), "_site.yml", append=TRUE)
     if(is.na(render)){
         render <- needs_render()
-        if(length(render)==0)
-            render <- FALSE
+        map(render, rmarkdown::render, output_dir = '_site')
     }
     # if (is.character(render))
-    if (render)
+    if (isTRUE(render))
         rmarkdown::render_site(dir)
     file.copy(list.files("_site", full.names=TRUE), dest_dir, recursive=TRUE, overwrite=TRUE)
 

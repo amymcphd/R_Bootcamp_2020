@@ -22,7 +22,8 @@ This webpage will be your guide to this course. Please Start by reading the
 * [Data Wrangling](DataWrangling.html) [![](images/pdf.png)](pdf/DataWrangling.pdf)
 * [Graphics](Graphics.html) [![](images/pdf.png)](pdf/Graphics.pdf)
     + [Heatmap example](Heatmap-example.nb.html)
-    + [Geo-spatial example](example-geo.nb.html)
+    + [Geo-spatial example](example-geo.html)
+    + [Florida county map example](Florida-map-example.R)
 * [Analysis](Analysis.html) [![](images/pdf.png)](pdf/Analysis.pdf)
 * [Wrapup](Wrapup.html) [![](images/pdf.png)](pdf/Wrapup.pdf)
 
@@ -44,6 +45,9 @@ This webpage will be your guide to this course. Please Start by reading the
 * [Day 1 - Full](https://youtu.be/ODPWOfPHVsk)
 * [Day 2 - Full](https://youtu.be/D0geSa7Y1kc)
 * [Day 3 - Full](https://youtu.be/Hv7Fdl9bqGI)
+* [Day 4 - Full](https://youtu.be/W05nwU8QYZs)
+    + [Bonus - Florida County Data Example](https://youtu.be/sia-a8s0lAk)
+* Day 5 - Full
 
 
 # {.footer}
