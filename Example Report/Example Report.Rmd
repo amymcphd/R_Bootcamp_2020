@@ -1,0 +1,44 @@
+---
+output:  "UtahSDBC::word_document"
+title: "Example SDBC Report Report"
+project-name: "Example SDBC REport"
+principal-investigator: "Amy Cizik"
+sdbc-project-number: "0000"
+author: "Andrew Redd, Ph.D."
+date: "`r Sys.Date()`"
+abstract: |
+    **REPORT KEY FINDINGS HERE**.  
+    
+    Summarize the **major** aspects of the statistical methods and 
+    results.  Report the **question(s) that were investigated**, the 
+    **statistical methods** used and the **major findings** in two or 
+    three sentences.  The **major findings** can also be as simple as 
+    a graph or table. 
+---
+
+**Write publication ready statistical methods section.** Investigator will independently write the methods on non-statistical methods such as how the study was conducted or how the data was gathered along with the study procedures. 
+
+**Describe how the data were summarized and analyzed including:**
+
+* Data transformations used(e.g., to correct for normal distribution or equalize variances) 
+
+* Statistical methods used with reference to the particular questions, or kinds of questions, they address. 
+
+* The level used to determine significance
+
+* Statistical software used
+
+**Investigators will cut and paste this into their papers.**
+
+
+All computations were performed using `r paste0("R version ", R.version$major, '.', R.version$minor)`.
+The reference will need to be put in the `bibliography.bibtex` file found in
+the same folder as this file.
+
+
+Research Objectives
+========================
+The research objective as stated in the analysis plan.
+
+Results
+========================
